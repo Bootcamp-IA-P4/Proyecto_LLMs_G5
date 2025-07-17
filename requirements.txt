@@ -1,5 +1,6 @@
 requests
 langchain-community
+langchain-ollama
 fastapi
 uvicorn
 ollama
