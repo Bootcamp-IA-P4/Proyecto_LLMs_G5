@@ -1,41 +1,33 @@
-from langchain_ollama import OllamaLLM
+from langchain_groq import ChatGroq
+import os
+from dotenv import load_dotenv
+from langchain_core.prompts import ChatPromptTemplate
 
-# Ahora vamos a crear una instancia del modelo que vamos a usar.
-# llm = OllamaLLM(model="llama3")
+script_dir = os.path.dirname(__file__)
+project_root = os.path.abspath(os.path.join(script_dir, "..", ".."))
+dotenv_path = os.path.join(project_root, ".env")
 
-# Vamos a crear un prompt para probar, más adelante lo haremss en la carpeta de prompts.
-# prompt = "Escribe un tweet corto y atractivo sobre la llegada del hombre a la Luna, incluyendo hashtags relevantes."
-
-# Ahora vamos invocar al modelo con el prompt.
-# response = llm.invoke(prompt)
-# print(response)
+load_dotenv(dotenv_path=dotenv_path)
 
 
-# Ahora vamos a crear una función para que sea reutilizable con otros temas, ya que antes he sido muy específica.
-def generate_text(topic: str, platform: str) -> str:
-    llm = OllamaLLM(model="llama3")
+try:  
+    from server.prompts.prompts import PROMPTS
+except ImportError:
+    print("No se encontró el archivo, usaremos el prompt por defecto")
+    PROMPTS = {"default": "Write  {topic}"}
 
-    # Seleccionamos el prompt adecuado según la plataforma.
-    if platform == "twitter":
-        prompt = f"Escribe un tweet corto y atractivo sobre '{topic}', incluyendo hashtags relevantes."
-    elif platform == "blog":
-        prompt = f"Escribe un párrafo de introducción para una entrada de blog sobre '{topic}'. El tono debe ser informativo y atractivo."
-    else:
-        prompt = f"Escribe un texto corto sobre '{topic}'."
 
-    print(f"--- Generando texto para '{platform}' sobre el tema: {topic} ---")
-    response = llm.invoke(prompt)
-    return response
+def generate_text(topic: str, platform: str, model_name: str = "llama3-8b-8192", voice: str = "a neutral and informative assistant") -> str:
+    print(f"Generating text for '{platform}' with the model '{model_name}'" )
+    try:
+        llm = ChatGroq(model=model_name, temperature=0.7)
+        prompt_template_string = PROMPTS.get(platform.lower(), PROMPTS["default"])
+        prompt_template = ChatPromptTemplate.from_template(prompt_template_string)
+        chain = prompt_template | llm
+        response = chain.invoke({"topic": topic, "voice": voice})
+        print("Generated text:")
+        return response.content
+    except Exception as e:
+        print(f"Error generating text: {e}")
+        return "Error generating text" 
 
-if __name__ == '__main__':
-    example_topic = "el futuro de los viajes espaciales"
-    
-    print("\n Twitter ---")
-    generated_tweet = generate_text(example_topic, "twitter")
-    print(generated_tweet)
-    
-    # Prueba para un Blog
-    print("\nBlog ---")
-    generated_blog_intro = generate_text(example_topic, "blog")
-    print(generated_blog_intro)
-    print("---------------------------")
