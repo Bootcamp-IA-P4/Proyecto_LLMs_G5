@@ -6,10 +6,9 @@ from datetime import datetime
 class ContentRequest(BaseModel):
     platform: str  
     topic: str
-    image_description: str
     audience: str  # juvenil, general, técnica
     language: str  # es, en, fr
-    model: str  # modelo de Groq seleccionado
+    model: Optional[str] = "llama3-8b-8192"  # modelo de Groq seleccionado
 
 class ContentResponse(BaseModel):
     text_content: str
