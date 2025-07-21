@@ -1,4 +1,5 @@
 import streamlit as st
+from server.config import LLM_MODEL
 from server.generators.text import generate_content
 
 def create_page():
@@ -6,7 +7,7 @@ def create_page():
     Crea y gestiona la página de la interfaz de usuario con Streamlit.
     """
     st.title(" Generador Automático de Contenido")
-    st.caption(f"Una PoC para Digital Content usando LLMs locales (Modelo: phi-3)")
+    st.caption(f"Una PoC para Digital Content usando LLMs locales: modelo local cargado (Modelo: {LLM_MODEL})")
 
     temas_sugeridos = [
         "Inteligencia Artificial y automatización",
@@ -35,7 +36,9 @@ def create_page():
         audiencia = st.selectbox("¿A quién va dirigido?", ["Público General", "Expertos en Tecnología", "Niños", "Inversores"])
 
         tono = st.selectbox("¿Qué tono debe tener?", ["Informal", "Profesional", "Divertido", "Divulgativo"])
-
+        # Agrega un campo para seleccionar el motor del modelo
+        llm_opciones = ["Ollama (local)", "Groq API (cloud)"]
+        llm_seleccionado = st.selectbox("¿Qué motor LLM quieres usar para generar el texto?", llm_opciones)
         submitted = st.form_submit_button("✨ Generar Contenido")
 
     if submitted:
@@ -44,7 +47,8 @@ def create_page():
                 tema=tema,
                 plataforma=plataforma,
                 audiencia=audiencia,
-                tono=tono
+                tono=tono,
+                llm_provider=llm_seleccionado
             )
             # resultado puede ser (imagen_bytes, texto) o (texto, imagen_bytes)
             if plataforma == "Instagram":

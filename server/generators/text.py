@@ -1,6 +1,6 @@
 from langchain_community.llms import Ollama
 from langchain.chains import LLMChain
-from server.config import LLM_MODEL
+from server.config import LLM_MODEL, OLLAMA_BASE_URL
 from server.prompts.twitter import twitter_prompt
 from server.prompts.blog import blog_prompt
 from server.prompts.instagram import instagram_prompt
@@ -19,8 +19,8 @@ from server.prompts.mastodon import mastodon_prompt
 from server.prompts.medium import medium_prompt
 from server.prompts.tumblr import tumblr_prompt
 from server.generators.image import generate_image_stability
-
-llm = Ollama(model=LLM_MODEL, num_ctx=2048)
+import os
+import openai
 
 PROMPT_MAP = {
     "Twitter/X": twitter_prompt,
@@ -42,18 +42,29 @@ PROMPT_MAP = {
     "Tumblr": tumblr_prompt,
 }
 
-def generate_content(tema: str, plataforma: str, audiencia: str, tono: str):
+def generate_content(tema: str, plataforma: str, audiencia: str, tono: str, llm_provider: str):
     prompt = PROMPT_MAP[plataforma]
-    chain = LLMChain(prompt=prompt, llm=llm)
-    texto = chain.run({
-        "tema": tema,
-        "audiencia": audiencia,
-        "tono": tono
-    })
-    # Generar la imagen
-    imagen_bytes = generate_image_stability(tema, plataforma, audiencia, tono)
-    # Lógica para insertar la imagen según la plataforma
-    if plataforma == "Instagram":
-        return imagen_bytes, texto  # Imagen primero, luego texto
+    # Generar texto con el motor seleccionado (local o cloud)
+    if llm_provider == "Ollama (local)":
+        model = os.getenv("LLM_MODEL", "gemma:2b")
+        chain = LLMChain(prompt=prompt, llm=Ollama(model=model, base_url=os.getenv("OLLAMA_BASE_URL", "http://ollama:11434")))
+        texto = chain.run({"tema": tema, "audiencia": audiencia, "tono": tono})
+    elif llm_provider == "Groq API (cloud)":
+        model = os.getenv("GROQ_MODEL", "llama-3-70b-8192")
+        openai.api_key = os.getenv("GROQ_API_KEY")
+        openai.api_base = "https://api.groq.com/openai/v1"
+        prompt_str = prompt.format(tema=tema, audiencia=audiencia, tono=tono)
+        response = openai.ChatCompletion.create(
+            model=model,
+            messages=[{"role": "user", "content": prompt_str}]
+        )
+        texto = response.choices[0].message.content
     else:
-        return texto, imagen_bytes  # Texto primero, luego imagen
+        raise ValueError("Proveedor LLM no soportado")
+
+    # Generar imagen
+    imagen_bytes = generate_image_stability(tema, plataforma, audiencia, tono)
+    if plataforma == "Instagram":
+        return imagen_bytes, texto
+    else:
+        return texto, imagen_bytes
