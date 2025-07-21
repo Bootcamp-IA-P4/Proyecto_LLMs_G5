@@ -1,2 +1,8 @@
 requests
 langchain-community
+langchain-ollama
+langchain-groq
+python-dotenv
+langchain-openai
+langchain
+langsmith
