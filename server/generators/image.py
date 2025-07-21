@@ -56,3 +56,4 @@ class ImageGenerator:
         except Exception as e:
             print(f"Error llamando a la API de Stability: {e}")
             return None
+
