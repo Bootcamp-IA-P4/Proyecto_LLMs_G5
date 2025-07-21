@@ -1,0 +1,35 @@
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    ports:
+      - "8501:8501"
+    depends_on:
+      - libretranslate
+      - ollama
+    environment:
+      - OLLAMA_BASE_URL=http://ollama:11434
+      - STABILITY_API_KEY=${STABILITY_API_KEY}
+      - GROQ_API_KEY=${GROQ_API_KEY}
+      - LLM_MODEL=gemma:2b
+
+  libretranslate:
+    image: libretranslate/libretranslate:latest
+    ports:
+      - "5000:5000"
+    # environment:
+    #   - LT_CHAR_LIMIT=0
+    #   - LT_REQ_LIMIT=0
+    restart: unless-stopped
+
+  ollama:
+    image: ollama/ollama:latest
+    ports:
+      - "11435:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    restart: unless-stopped
+
+volumes:
+  ollama_data:
