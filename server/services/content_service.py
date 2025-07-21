@@ -5,25 +5,14 @@ from server.models.post import ContentRequest, ContentResponse
 from uuid import UUID
 
 async def generate_content(request: ContentRequest, user_id: UUID):
-    audience_voice_map = {
-        "juvenil": "a fresh, youthful and engaging voice",
-        "general": "a neutral and informative tone",
-        "técnica": "a formal and technical tone"
-    }
-
-    voice = audience_voice_map.get(request.audience.lower(), "a neutral and informative tone")
     model_used = request.model if request.model and request.model.strip() else "llama3-8b-8192"
-
-    print(f"🔧 Generating text for '{request.platform}' with model '{model_used}'")
-    print(f"📝 Topic: {request.topic}")
-    print(f"🎯 Voice: {voice}")
     
     try:
         generated_text = generate_text(
             topic=request.topic,
             platform=request.platform,
             model_name=model_used,
-            voice=voice,
+            voice=request.audience, 
             company_info="",
             language=request.language
         )
@@ -46,7 +35,7 @@ async def generate_content(request: ContentRequest, user_id: UUID):
 
     print("💾 Saving to Supabase...")
     try:
-        response = supabase.table("posts").insert(post_data).execute()        
+        response = supabase.table("posts").insert(post_data).execute()
         # Supabase no tiene status_code, solo verifica si hay data
         if not response.data:
             raise Exception("No data returned from Supabase insert")

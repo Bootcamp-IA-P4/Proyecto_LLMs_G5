@@ -27,14 +27,21 @@ def generate_text(topic: str, platform: str, model_name: str = "llama3-8b-8192",
     "it" : "Italian"
     }
 
+    VOICE_MAP = {
+    "juvenil": "a fresh, youthful and engaging voice",
+    "general": "a neutral and informative tone", 
+    "técnica": "a formal and technical tone"
+    }   
+
     language_full = LANG_MAP.get(language.lower(), "English")
+    voice_full = VOICE_MAP.get(voice.lower(), "a neutral and informative tone")
+
     try:
         llm = ChatGroq(model=model_name, temperature=0.7)
         prompt_template_string = PROMPTS.get(platform.lower(), PROMPTS["default"])
         prompt_template = ChatPromptTemplate.from_template(prompt_template_string)
         chain = prompt_template | llm
-        response = chain.invoke({"topic": topic, "voice": voice, "company_info": company_info, "language": language_full})
-        print("Generated text:")
+        response = chain.invoke({"topic": topic, "voice": voice_full, "company_info": company_info, "language": language_full})
         return response.content
     except Exception as e:
         print(f"Error generating text: {e}")
