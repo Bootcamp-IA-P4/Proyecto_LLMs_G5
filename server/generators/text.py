@@ -17,14 +17,14 @@ except ImportError:
     PROMPTS = {"default": "Write  {topic}"}
 
 
-def generate_text(topic: str, platform: str, model_name: str = "llama3-8b-8192", voice: str = "a neutral and informative assistant") -> str:
+def generate_text(topic: str, platform: str, model_name: str = "llama3-8b-8192", voice: str = "a neutral and informative assistant", company_info: str = "") -> str:
     print(f"Generating text for '{platform}' with the model '{model_name}'" )
     try:
         llm = ChatGroq(model=model_name, temperature=0.7)
         prompt_template_string = PROMPTS.get(platform.lower(), PROMPTS["default"])
         prompt_template = ChatPromptTemplate.from_template(prompt_template_string)
         chain = prompt_template | llm
-        response = chain.invoke({"topic": topic, "voice": voice})
+        response = chain.invoke({"topic": topic, "voice": voice, "company_info": company_info})
         print("Generated text:")
         return response.content
     except Exception as e:
