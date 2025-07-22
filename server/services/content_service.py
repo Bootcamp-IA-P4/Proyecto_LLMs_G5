@@ -1,6 +1,8 @@
+import base64
 from server.config.settings import settings
 from server.utils.database import get_supabase
 from server.generators.text import generate_text
+from server.generators.image import generate_image_stability
 from server.models.post import ContentRequest, ContentResponse
 from uuid import UUID
 
@@ -20,6 +22,20 @@ async def generate_content(request: ContentRequest, user_id: UUID):
     except Exception as e:
         print(f"❌ Error generating text: {e}")
         raise Exception(f"Text generation failed: {str(e)}")
+
+    # Nueva generación de imagen
+    try:
+        imagen_bytes = generate_image_stability(
+            request.topic,
+            request.platform,
+            request.audience,
+            request.language
+        )
+        imagen_base64 = base64.b64encode(imagen_bytes).decode("utf-8")
+        imagen_dataurl = f"data:image/webp;base64,{imagen_base64}"
+    except Exception as e:
+        print(f"❌ Error generating image: {e}")
+        imagen_dataurl = None
 
     # Guardar en base de datos
     supabase = get_supabase()
@@ -47,7 +63,7 @@ async def generate_content(request: ContentRequest, user_id: UUID):
 
     return ContentResponse(
         text_content=generated_text,
-        image_url=None
+        image_url=imagen_dataurl
     )
 
 

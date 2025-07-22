@@ -1,6 +1,7 @@
 import requests
 import os
 from dotenv import load_dotenv
+from server.config.settings import settings
 from server.utils.translate import translate_es_to_en
 load_dotenv()
 
@@ -9,9 +10,7 @@ def generate_image_stability(tema: str, plataforma: str, audiencia: str, tono: s
     Genera una imagen usando la API de Stability AI basada en los parámetros dados.
     Devuelve los bytes de la imagen generada.
     """
-    api_key = os.getenv("STABILITY_API_KEY")
-    if not api_key:
-        raise ValueError("No se encontró la variable de entorno STABILITY_API_KEY")
+    api_key = settings.STABILITY_API_KEY
 
     # Construir un prompt adecuado para la imagen
     prompt_es = f"Ilustración para {plataforma}. Tema: {tema}. Audiencia: {audiencia}. Tono: {tono}. Genera una imagen atractiva y relevante."

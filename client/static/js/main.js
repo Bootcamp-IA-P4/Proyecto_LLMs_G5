@@ -84,6 +84,7 @@ if (document.getElementById("contentForm")) {
             const data = await res.json();
             if (res.ok) {
                 document.getElementById("result").innerHTML = `<h3>Resultado:</h3><p>${data.text_content}</p>`;
+                document.getElementById("imagen").src = data.image_url;
             } else {
                 document.getElementById("result").innerHTML = `<span class="error">${data.detail || "Error generando contenido"}</span>`;
             }

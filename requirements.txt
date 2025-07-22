@@ -17,3 +17,4 @@ pydantic[email]
 langchain-core
 libretranslatepy
 openai
+jinja2

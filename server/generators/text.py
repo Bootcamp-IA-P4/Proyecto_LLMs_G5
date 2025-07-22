@@ -43,8 +43,7 @@ def generate_text(topic: str, platform: str, model_name: str = "llama3-8b-8192",
         prompt_template = ChatPromptTemplate.from_template(prompt_template_string)
         chain = prompt_template | llm
         response = chain.invoke({"topic": topic, "voice": voice_full, "company_info": company_info, "language": language_full})
-        imagen_bytes = generate_image_stability(topic, platform, model_name, voice, company_info, language)
-        return response.content, imagen_bytes
+        return response.content
     except Exception as e:
         print(f"Error generating text: {e}")
         return "Error generating text" 
