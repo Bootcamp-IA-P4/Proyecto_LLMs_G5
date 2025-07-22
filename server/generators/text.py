@@ -1,70 +1,51 @@
-from langchain_community.llms import Ollama
-from langchain.chains import LLMChain
-from server.config import LLM_MODEL, OLLAMA_BASE_URL
-from server.prompts.twitter import twitter_prompt
-from server.prompts.blog import blog_prompt
-from server.prompts.instagram import instagram_prompt
-from server.prompts.linkedin import linkedin_prompt
-from server.prompts.facebook import facebook_prompt
-from server.prompts.tiktok import tiktok_prompt
-from server.prompts.youtube import youtube_prompt
-from server.prompts.threads import threads_prompt
-from server.prompts.snapchat import snapchat_prompt
-from server.prompts.pinterest import pinterest_prompt
-from server.prompts.reddit import reddit_prompt
-from server.prompts.telegram import telegram_prompt
-from server.prompts.whatsapp import whatsapp_prompt
-from server.prompts.bluesky import bluesky_prompt
-from server.prompts.mastodon import mastodon_prompt
-from server.prompts.medium import medium_prompt
-from server.prompts.tumblr import tumblr_prompt
-from server.generators.image import generate_image_stability
+from langchain_groq import ChatGroq
 import os
-import openai
+from dotenv import load_dotenv
+from langchain_core.prompts import ChatPromptTemplate
+from server.generators.image import generate_image_stability
 
-PROMPT_MAP = {
-    "Twitter/X": twitter_prompt,
-    "Blog": blog_prompt,
-    "Instagram": instagram_prompt,
-    "LinkedIn": linkedin_prompt,
-    "Facebook": facebook_prompt,
-    "TikTok": tiktok_prompt,
-    "YouTube": youtube_prompt,
-    "Threads": threads_prompt,
-    "Snapchat": snapchat_prompt,
-    "Pinterest": pinterest_prompt,
-    "Reddit": reddit_prompt,
-    "Telegram": telegram_prompt,
-    "WhatsApp Channels": whatsapp_prompt,
-    "Bluesky": bluesky_prompt,
-    "Mastodon": mastodon_prompt,
-    "Medium": medium_prompt,
-    "Tumblr": tumblr_prompt,
-}
+script_dir = os.path.dirname(__file__)
+project_root = os.path.abspath(os.path.join(script_dir, "..", ".."))
+dotenv_path = os.path.join(project_root, ".env")
 
-def generate_content(tema: str, plataforma: str, audiencia: str, tono: str, llm_provider: str):
-    prompt = PROMPT_MAP[plataforma]
-    # Generar texto con el motor seleccionado (local o cloud)
-    if llm_provider == "Ollama (local)":
-        model = os.getenv("LLM_MODEL", "gemma:2b")
-        chain = LLMChain(prompt=prompt, llm=Ollama(model=model, base_url=os.getenv("OLLAMA_BASE_URL", "http://ollama:11434")))
-        texto = chain.run({"tema": tema, "audiencia": audiencia, "tono": tono})
-    elif llm_provider == "Groq API (cloud)":
-        model = os.getenv("GROQ_MODEL", "llama-3-70b-8192")
-        openai.api_key = os.getenv("GROQ_API_KEY")
-        openai.api_base = "https://api.groq.com/openai/v1"
-        prompt_str = prompt.format(tema=tema, audiencia=audiencia, tono=tono)
-        response = openai.ChatCompletion.create(
-            model=model,
-            messages=[{"role": "user", "content": prompt_str}]
-        )
-        texto = response.choices[0].message.content
-    else:
-        raise ValueError("Proveedor LLM no soportado")
+load_dotenv(dotenv_path=dotenv_path)
 
-    # Generar imagen
-    imagen_bytes = generate_image_stability(tema, plataforma, audiencia, tono)
-    if plataforma == "Instagram":
-        return imagen_bytes, texto
-    else:
-        return texto, imagen_bytes
+
+try:  
+    from server.prompts.prompts import PROMPTS
+except ImportError:
+    print("No se encontró el archivo, usaremos el prompt por defecto")
+    PROMPTS = {"default": "Write  {topic}"}
+
+
+
+def generate_text(topic: str, platform: str, model_name: str = "llama3-8b-8192", voice: str = "a neutral and informative assistant", company_info: str = "", language: str = "en") -> str:
+    print(f"Generating text for '{platform}' with the model '{model_name}'" )
+    LANG_MAP = {
+    "es" : "Spanish",
+    "en" : "English",
+    "fr" : "French",
+    "it" : "Italian"
+    }
+
+    VOICE_MAP = {
+    "juvenil": "a fresh, youthful and engaging voice",
+    "general": "a neutral and informative tone", 
+    "técnica": "a formal and technical tone"
+    }   
+
+    language_full = LANG_MAP.get(language.lower(), "English")
+    voice_full = VOICE_MAP.get(voice.lower(), "a neutral and informative tone")
+
+    try:
+        llm = ChatGroq(model=model_name, temperature=0.7)
+        prompt_template_string = PROMPTS.get(platform.lower(), PROMPTS["default"])
+        prompt_template = ChatPromptTemplate.from_template(prompt_template_string)
+        chain = prompt_template | llm
+        response = chain.invoke({"topic": topic, "voice": voice_full, "company_info": company_info, "language": language_full})
+        imagen_bytes = generate_image_stability(topic, platform, model_name, voice, company_info, language)
+        return response.content, imagen_bytes
+    except Exception as e:
+        print(f"Error generating text: {e}")
+        return "Error generating text" 
+

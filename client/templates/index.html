@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Generador de Contenido IA</title>
+    <link rel="stylesheet" href="{{ url_for('static', path='css/styles.css') }}">
+</head>
+
+<body>
+    <div class="container">
+        <h2>Generar contenido para redes sociales</h2>
+        <form id="contentForm">
+            <input type="text" name="topic" placeholder="Tema" required>
+            <select name="platform" required>
+                <option value="">Selecciona plataforma</option>
+                <option value="twitter">Twitter/X</option>
+                <option value="instagram">Instagram</option>
+                <option value="medium">Medium</option>
+                <option value="linkedin">LinkedIn</option>
+            </select>
+            <select name="audience" required>
+                <option value="">Selecciona audiencia</option>
+                <option value="juvenil">Juvenil</option>
+                <option value="general">General</option>
+                <option value="técnica">Técnica</option>
+            </select>
+            <select name="language" required>
+                <option value="es">Español</option>
+                <option value="en">Inglés</option>
+                <option value="fr">Francés</option>
+                <option value="it">Italiano</option>
+            </select>
+            <select name="model">
+                <option value="llama3-8b-8192">Llama 3</option>
+                <option value="mistral-saba-24b">Mistral</option>
+                <option value="gemma2-9b-it">Gemma</option>
+                <!-- Agrega más modelos si los tienes disponibles -->
+            </select>
+            <input type="text" name="company_info" placeholder="Información de empresa/persona (opcional)">
+            <button type="submit">Generar</button>
+        </form>
+        <div id="result"></div>
+        <button id="logoutBtn">Cerrar sesión</button>
+    </div>
+    <script src="{{ url_for('static', path='js/main.js') }}"></script>
+</body>
+
+</html>
