@@ -8,16 +8,22 @@
 </head>
 
 <body>
+    <nav class="navbar">
+        <span class="logo">Generador IA</span>
+        <button id="logoutBtn" type="button">Cerrar sesión</button>
+    </nav>
     <div class="container">
-        <h2>Generar contenido para redes sociales</h2>
+        <h2>Genera contenido para tus redes sociales</h2>
         <form id="contentForm">
             <input type="text" name="topic" placeholder="Tema" required>
             <select name="platform" required>
                 <option value="">Selecciona plataforma</option>
                 <option value="twitter">Twitter/X</option>
                 <option value="instagram">Instagram</option>
-                <option value="medium">Medium</option>
-                <option value="linkedin">LinkedIn</option>
+                <option value="blog">Blog (Medium/Substack)</option>
+                <option value="linkedin">Linkedin</option>
+                <option value="tiktok">TikTok</option>
+                <option value="product_description">Descripción de producto</option>
             </select>
             <select name="audience" required>
                 <option value="">Selecciona audiencia</option>
@@ -41,7 +47,12 @@
             <button type="submit">Generar</button>
         </form>
         <div id="result"></div>
-        <button id="logoutBtn">Cerrar sesión</button>
+        <div class="actions" id="actionsBtns" style="display:none;">
+            <button id="copyBtn" type="button">Copiar contenido</button>
+            <button id="exportMdBtn" type="button">Exportar .md</button>
+            <button id="exportTxtBtn" type="button">Exportar .txt</button>
+        </div>
+        <button id="resetBtn" type="button" style="display: none;">Realizar otro texto</button>
     </div>
     <script src="{{ url_for('static', path='js/main.js') }}"></script>
 </body>
