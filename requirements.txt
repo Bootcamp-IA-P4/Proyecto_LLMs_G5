@@ -14,3 +14,4 @@ requests
 supabase
 uvicorn
 pydantic[email]
+jinja2
