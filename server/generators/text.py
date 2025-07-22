@@ -1,51 +1,49 @@
-from langchain_community.llms import Ollama
+from langchain_groq import ChatGroq
+import os
+from dotenv import load_dotenv
 from langchain_core.prompts import ChatPromptTemplate
 
-llm = Ollama(model="phi")  # Cambia a "gemma", "stablelm-zephyr", etc.
+script_dir = os.path.dirname(__file__)
+project_root = os.path.abspath(os.path.join(script_dir, "..", ".."))
+dotenv_path = os.path.join(project_root, ".env")
 
-# Prompt dinámico
-prompt_template = ChatPromptTemplate.from_messages([
-    ("system", """
-    Genera un {tipo_contenido} sobre {tema} para {audiencia}.
-    - Plataforma: {plataforma}.
-    - Estilo: {estilo}.
-    - Longitud: {longitud}.
-    """),
-])
+load_dotenv(dotenv_path=dotenv_path)
 
-def generar_contenido(tema, plataforma, audiencia):
-    # Define parámetros según plataforma
-    if plataforma.lower() == "blog":
-        tipo_contenido = "artículo detallado"
-        estilo = "profesional con ejemplos prácticos"
-        longitud = "800 palabras"
-    elif plataforma.lower() == "twitter":
-        tipo_contenido = "tweet impactante"
-        estilo = "directo y con hashtags relevantes"
-        longitud = "280 caracteres máximo"
-    else:
-        tipo_contenido = "post"
-        estilo = "adaptado a la plataforma"
-        longitud = "variable"
 
-    # Ejecuta el prompt
-    chain = prompt_template | llm
-    respuesta = chain.invoke({
-        "tipo_contenido": tipo_contenido,
-        "tema": tema,
-        "audiencia": audiencia,
-        "plataforma": plataforma,
-        "estilo": estilo,
-        "longitud": longitud
-    })
-    return respuesta
+try:  
+    from server.prompts.prompts import PROMPTS
+except ImportError:
+    print("No se encontró el archivo, usaremos el prompt por defecto")
+    PROMPTS = {"default": "Write  {topic}"}
 
-# ¡Prueba la función!
-if __name__ == "__main__":
-    tema = input("Tema del contenido: ")
-    plataforma = input("Plataforma (Blog/Twitter/Instagram): ")
-    audiencia = input("Audiencia (General/Técnica/Infantil): ")
-    
-    contenido = generar_contenido(tema, plataforma, audiencia)
-    print("\n--- Contenido Generado ---")
-    print(contenido)
+
+
+def generate_text(topic: str, platform: str, model_name: str = "llama3-8b-8192", voice: str = "a neutral and informative assistant", company_info: str = "", language: str = "en") -> str:
+    print(f"Generating text for '{platform}' with the model '{model_name}'" )
+    LANG_MAP = {
+    "es" : "Spanish",
+    "en" : "English",
+    "fr" : "French",
+    "it" : "Italian"
+    }
+
+    VOICE_MAP = {
+    "juvenil": "a fresh, youthful and engaging voice",
+    "general": "a neutral and informative tone", 
+    "técnica": "a formal and technical tone"
+    }   
+
+    language_full = LANG_MAP.get(language.lower(), "English")
+    voice_full = VOICE_MAP.get(voice.lower(), "a neutral and informative tone")
+
+    try:
+        llm = ChatGroq(model=model_name, temperature=0.7)
+        prompt_template_string = PROMPTS.get(platform.lower(), PROMPTS["default"])
+        prompt_template = ChatPromptTemplate.from_template(prompt_template_string)
+        chain = prompt_template | llm
+        response = chain.invoke({"topic": topic, "voice": voice_full, "company_info": company_info, "language": language_full})
+        return response.content
+    except Exception as e:
+        print(f"Error generating text: {e}")
+        return "Error generating text" 
+
