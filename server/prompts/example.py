@@ -1,7 +1,9 @@
 from prompts import PROMPTS
 
-prompt = PROMPTS["twitter"].format(
-    topic="the future of AI in education",
-    person="a fun, youth-oriented tech influencer writing for Gen Z",
-    company_info="an edtech startup focused on gamified learning for schools"
+prompt = PROMPTS["instagram"].format(
+    topic="sustainable fashion for Gen Z",
+    voice="fun, youth-focused, and eco-conscious",
+    company_info="a startup designing stylish clothes from recycled materials",
+    language="English"
 )
+

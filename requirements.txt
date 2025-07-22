@@ -1,2 +1,8 @@
 requests
 langchain-community
+langchain-groq
+python-dotenv
+streamlit
+langchain-core
+openai
+python-dotenv
