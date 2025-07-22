@@ -102,10 +102,10 @@ typing-extensions
 urllib3
 uvicorn
 pydantic[email]
-jinja2
 deep_translator
 cloudinary 
 websockets
 xmltodict
 yarl
 zstandard
+openai

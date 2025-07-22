@@ -91,7 +91,6 @@ if (document.getElementById("contentForm")) {
             if (res.ok) {
                 let content = data.text_content;
                 const selectedPlatform = formData.get("platform");
-
                 // Formateamos mejor el contenido para las generaciones de blog
                 if (selectedPlatform === "blog") {
                     content = content
@@ -104,7 +103,6 @@ if (document.getElementById("contentForm")) {
                 } else {
                     content = `<p>${content}</p>`;
                 }
-
                 document.getElementById("result").innerHTML = `<h3>Resultado:</h3>${content}`;
                 // Mostrar la imagen 
                 const imageDiv = document.getElementById('image-result');
