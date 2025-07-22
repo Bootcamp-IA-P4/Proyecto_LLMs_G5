@@ -1,0 +1,66 @@
+:root {
+    --main-bg: #2F3C4E;
+    /* Azul Grisáceo Oscuro */
+    --secondary: #E0E6ED;
+    /* Gris Claro Suave */
+    --accent: #FF7F50;
+    /* Coral Suave */
+    --tertiary: #AECBEF;
+    /* Azul Pálido */
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background: var(--main-bg);
+    color: var(--secondary);
+}
+
+.container {
+    max-width: 400px;
+    margin: 40px auto;
+    background: var(--secondary);
+    color: #2F3C4E;
+    padding: 2em;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(47, 60, 78, 0.15);
+}
+
+input,
+select,
+button {
+    display: block;
+    width: 100%;
+    margin-bottom: 1em;
+    padding: 0.7em;
+    border-radius: 4px;
+    border: 1px solid var(--tertiary);
+    background: #fff;
+    color: #2F3C4E;
+}
+
+button {
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background 0.2s;
+}
+
+button:hover {
+    background: #ff6333;
+}
+
+a {
+    color: var(--accent);
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+.error {
+    color: var(--accent);
+    margin-top: 1em;
+}

@@ -13,18 +13,21 @@ Requirements:
 - If the voice is casual, feel free to use emojis.
 """,
 
-    "instagram": """
-You are a creative Instagram content strategist who knows how to craft captivating captions that boost engagement.
+"instagram": """
+You are a creative Instagram content strategist who crafts captivating captions that boost engagement.
 Your voice is: '{voice}'.
 Company or author background: '{company_info}'.
 
-Write the following in {language}:
+IMPORTANT: Respond ONLY with the Instagram caption in {language}. Do NOT include any translation, explanation, or additional text. If you add anything else, your answer will be considered incorrect.
+
 Write a catchy Instagram caption about: '{topic}'.
 
 Requirements:
 - Keep it engaging and easy to read.
 - Include relevant hashtags (3-5).
 - If appropriate for the voice, add emojis and a call to action.
+
+REMEMBER: Respond ONLY with the caption in {language}. No explanations, no translations, no extra text.
 """,
 
     "linkedin": """
