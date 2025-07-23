@@ -1,3 +1,7 @@
+document.addEventListener("DOMContentLoaded", function() {
+    // ...todo tu código JS aquí...
+//const { Debug } = require("@prisma/client/runtime/library");
+
 function getToken() {
     return localStorage.getItem("access_token");
 }
@@ -72,7 +76,13 @@ if (document.getElementById("contentForm")) {
             };
             if (formData.get("company_info")) {
                 payload.company_info = formData.get("company_info");
-            }
+            }            
+            alert("Voy a imprimir el token");
+            console.log("Token enviado:", getToken());
+            console.log("Cabeceras:", {
+                "Content-Type": "application/json",
+                "Authorization": "Bearer " + getToken()
+            });
             const res = await fetch("/api/content/generate", {
                 method: "POST",
                 headers: {
@@ -101,3 +111,5 @@ if (document.getElementById("logoutBtn")) {
         window.location.href = "/login";
     };
 }
+
+});

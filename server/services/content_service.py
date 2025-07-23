@@ -2,7 +2,7 @@ import base64
 from server.config.settings import settings
 from server.utils.database import get_supabase
 from server.generators.text import generate_text
-from server.generators.image import generate_image_stability
+from server.generators.image import generate_image_huggingface
 from server.models.post import ContentRequest, ContentResponse
 from uuid import UUID
 
@@ -25,11 +25,12 @@ async def generate_content(request: ContentRequest, user_id: UUID):
 
     # Nueva generación de imagen
     try:
-        imagen_bytes = generate_image_stability(
-            request.topic,
-            request.platform,
-            request.audience,
-            request.language
+        imagen_bytes = generate_image_huggingface(
+            topic=request.topic,
+            platform=request.platform,
+            voice=request.audience,           # Usamos audience como voice
+            company_info="",                  # Puede ser nulo o vacío
+            language=request.language         # Pasamos el idioma de salida
         )
         imagen_base64 = base64.b64encode(imagen_bytes).decode("utf-8")
         imagen_dataurl = f"data:image/webp;base64,{imagen_base64}"

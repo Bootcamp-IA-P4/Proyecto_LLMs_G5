@@ -8,7 +8,9 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY server /app/server
 COPY client /app/client
 
+RUN apt-get update && apt-get install -y iputils-ping curl
+
 EXPOSE 8000
 
 RUN ls -lR /app/client
-CMD ["uvicorn", "server.main:app", "--host", "0.0.0.0", "--port", "8000"] 
+CMD ["uvicorn", "server.main:app", "--host", "0.0.0.0", "--port", "8000"]

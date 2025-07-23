@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Request
 from server.models.post import ContentRequest, ContentResponse, PostHistory
 from server.services.content_service import generate_content, get_user_posts
 from server.utils.dependencies import get_current_user
@@ -8,12 +8,14 @@ router = APIRouter()
 
 @router.post("/generate", response_model=ContentResponse)
 async def generate_post(
-    request: ContentRequest,
+    request_data: ContentRequest,
+    # Debugging: Print the authorization header
+    request: Request,
     current_user: UUID = Depends(get_current_user)
 ):
     """Generar contenido de texto e imagen"""
-    try:
-        result = await generate_content(request, current_user)
+    try:        
+        result = await generate_content(request_data, current_user)
         return result
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
