@@ -13,7 +13,11 @@
         <button id="logoutBtn" type="button">Cerrar sesión</button>
     </nav>
     <div class="container">
-        <h2>Genera contenido para tus redes sociales</h2>
+        <h2 class="h2_title">Genera contenido para tus redes sociales</h2>
+        <p class="intro-text">
+            Te ayudamos a generar contenido para ahorrar tiempo si eres creador de contenido.
+            Rellena los datos y empieza a generar texto e imágenes para tus redes sociales.
+        </p>
         <form id="contentForm">
             <input type="text" name="topic" placeholder="Tema" required>
             <select name="platform" required>
@@ -41,10 +45,9 @@
                 <option value="llama3-8b-8192">Llama 3</option>
                 <option value="mistral-saba-24b">Mistral</option>
                 <option value="gemma2-9b-it">Gemma</option>
-                <!-- Agrega más modelos si los tienes disponibles -->
             </select>
             <input type="text" name="company_info" placeholder="Información de empresa/persona (opcional)">
-            <button type="submit">Generar</button>
+            <button type="submit" class="button_gen">Generar</button>
         </form>
         <div id="result"></div>
         <div class="actions" id="actionsBtns" style="display:none;">
