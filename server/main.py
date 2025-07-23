@@ -50,3 +50,7 @@ async def login_page(request: Request):
 @app.get("/register")
 async def register_page(request: Request):
     return templates.TemplateResponse("register.html", {"request": request})
+
+@app.get("/langsmith")
+async def langsmit_page(request: Request):
+    return templates.TemplateResponse("langsmith.html", {"request": request})
