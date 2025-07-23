@@ -10,7 +10,10 @@
 <body>
     <nav class="navbar">
         <span class="logo">Generador IA</span>
-        <button id="logoutBtn" type="button">Cerrar sesión</button>
+        <div class="navbar-actions">
+            <button id="logsNavBtn" type="button">Ver Logs LangSmith</button>
+            <button id="logoutBtn" type="button">Cerrar sesión</button>
+        </div>    
     </nav>
     <div class="container">
         <h2 class="h2_title">Genera contenido para tus redes sociales</h2>
@@ -43,7 +46,6 @@
             </select>
             <select name="model">
                 <option value="llama3-8b-8192">Llama 3</option>
-                <option value="mistral-saba-24b">Mistral</option>
                 <option value="gemma2-9b-it">Gemma</option>
             </select>
             <input type="text" name="company_info" placeholder="Información de empresa/persona (opcional)">

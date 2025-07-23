@@ -185,3 +185,88 @@ if (document.getElementById("resetBtn")) {
     };
 }
 
+if (document.getElementById("fetchLogsBtn")) {
+    document.getElementById("fetchLogsBtn").onclick = async function() {
+        const output = document.getElementById("logsOutput");
+        output.innerHTML = "Cargando logs...";
+
+        try {
+            const res = await fetch("/api/content/langsmith", {
+                method: "POST",
+                headers: {
+                    "Authorization": "Bearer " + getToken(),
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ limit: 10 })
+            });
+
+            const data = await res.json();
+            if (res.ok && data.runs && data.runs.length > 0) {
+                let html = `<table>
+                    <thead>
+                        <tr>
+                            <th>Fecha</th>
+                            <th>Modelo</th>
+                            <th>Tipo</th>
+                            <th>Topic</th>
+                            <th>Input (prompt)</th>
+                            <th>Output (respuesta generada)</th>
+                            <th>Estado</th>
+                            <th>Error</th>
+                        </tr>
+                    </thead>
+                    <tbody>`;
+                data.runs.forEach(run => {
+                    // Modelo
+                    let model = run.extra?.invocation_params?.ls_model_name || run.extra?.invocation_params?.model || "-";
+                    // Topic (si existe)
+                    let topic = run.inputs?.messages?.[0]?.[0]?.kwargs?.content?.match(/about: '([^']+)'/)?.[1]
+                        || run.inputs?.topic
+                        || "-";
+                    // Prompt (input)
+                    let prompt = run.inputs?.messages?.[0]?.[0]?.kwargs?.content
+                        || run.inputs?.topic
+                        || JSON.stringify(run.inputs || {}, null, 2);
+                    // Output (respuesta generada)
+                    let output = "";
+                    if (run.outputs?.generations?.[0]?.[0]?.text) {
+                        output = run.outputs.generations[0][0].text;
+                    } else if (run.outputs?.output?.content) {
+                        output = run.outputs.output.content;
+                    } else if (run.outputs?.output) {
+                        output = JSON.stringify(run.outputs.output);
+                    } else {
+                        output = "-";
+                    }
+                    // Limitar a 100 caracteres y agregar "..." si es más largo
+                    function truncate(str, n = 100) {
+                        return (str && str.length > n) ? str.slice(0, n) + "..." : str;
+                    }
+                    html += `<tr>
+                        <td>${run.start_time ? new Date(run.start_time).toLocaleString() : "-"}</td>
+                        <td>${model}</td>
+                        <td>${run.run_type || "-"}</td>
+                        <td>${topic}</td>
+                        <td class="log-prompt">${truncate(prompt, 100)}</td>
+                        <td class="log-output">${truncate(output, 100)}</td>
+                        <td class="${run.status === 'success' ? 'log-success' : 'log-error'}">${run.status || "-"}</td>
+                        <td class="log-error">${run.error ? run.error.split('\n')[0].slice(0, 80) + "..." : ""}</td>
+                    </tr>`;
+                });
+                html += "</tbody></table>";
+                output.innerHTML = html;
+            } else if (res.ok) {
+                output.innerHTML = "<em>No hay logs recientes.</em>";
+            } else {
+                output.innerHTML = `<span class="log-error">Error: ${data.detail || res.status}</span>`;
+            }
+        } catch (err) {
+            output.innerHTML = "<span class='log-error'>Error de red al cargar los logs.</span>";
+        }
+    };
+}
+if (document.getElementById("logsNavBtn")) {
+    document.getElementById("logsNavBtn").onclick = function() {
+        window.location.href = "/langsmith";
+    };
+}
