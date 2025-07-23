@@ -27,6 +27,25 @@ app.include_router(content_router, prefix="/api/content", tags=["content"])
 async def root():
     return {"message": "AI Social Content Generator API"}
 
+from fastapi import FastAPI
+from .rag_chain import ScientificRAG
+
+app = FastAPI()
+rag = ScientificRAG("server/vectorstore") # Ruta al vector store
+
+
+@app.post("/explain")
+async def explain_science(topic: str):
+    try:
+        response = rag.explain_concept(topic)
+        return {
+            "topic": topic,
+            "explanation": response.content,
+            "sources": [doc.metadata for doc in response.metadata.get("source_docs", [])]
+        }
+    except Exception as e:
+        return {"error": str(e)}
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8000)

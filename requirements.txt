@@ -15,3 +15,8 @@ langchain-core
 openai
 supabase
 uvicorn
+arxiv
+faiss-cpu
+sentence-transformers
+fastapi
+pydantic[email]
