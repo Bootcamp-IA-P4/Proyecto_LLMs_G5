@@ -9,7 +9,10 @@
 
 <body class="langsmith-bg">
     <nav class="navbar langsmith-navbar">
-        <span class="logo">Generador IA</span>
+        <span class="logo">
+            <img src="{{ url_for('static', path='img/logo-cgai.png') }}" alt="Logo" class="logo-img">
+            ContentGenius AI
+        </span>
         <div class="navbar-actions">
             <button onclick="window.location.href='/'" type="button">Volver</button>
             <button id="logoutBtn" type="button">Cerrar sesión</button>

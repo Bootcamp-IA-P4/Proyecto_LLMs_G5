@@ -111,10 +111,19 @@ button:hover,
 }
 
 .logo {
+    display: flex;
+    align-items: center;
+    gap: 0.2em;
     font-weight: bold;
     font-size: 1.2em;
-    color: #FF7F50;
+    color: #fff;
     letter-spacing: 1px;
+}
+.logo-img {
+    height: 2em;
+    width: auto;
+    display: inline-block;
+    vertical-align: middle;
 }
 .navbar-actions {
     display: flex;
@@ -362,16 +371,29 @@ a:hover {
 /* ----------- LangSmith Logs Página ----------- */
 .langsmith-bg {
     background: #f3f6fa;
+    width: 100vw;
+        min-width: 100vw;
+        max-width: 100vw;
+        min-height: 100vh;
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        overflow-x: hidden;
 }
-
+.langsmith-navbar,
+.navbar {
+    width: 100vw;
+    min-width: 100vw;
+    box-sizing: border-box;
+}
 .langsmith-navbar {
     background: #1a2233;
     color: #fff;
 }
 
 .langsmith-container {
-    max-width: 98vw;
-    width: 98vw;
+    max-width: 100vw;
+    width: 100%;
     margin: 30px auto;
     background: #fff;
     border-radius: 18px;
@@ -387,7 +409,7 @@ a:hover {
     box-shadow: 0 2px 8px rgba(47, 60, 78, 0.08);
     padding: 1em;
     font-size: 1em;
-    min-width: 1200px;
+    width: 100%;
 }
 
 .langsmith-table table {
@@ -453,4 +475,74 @@ a:hover {
 
 .small-btn:hover {
     background: #ff6333;
+}
+
+@media (max-width: 700px) {
+    .langsmith-container {
+        max-width: 100vw;
+        width: 100vw;
+        margin: 0;
+        border-radius: 0;
+        padding: 1em 0.2em 1em 0.2em;
+        box-shadow: none;
+    }
+
+    .langsmith-table {
+        padding: 0.5em 0.1em;
+        font-size: 0.95em;
+    }
+
+    .langsmith-table table {
+        min-width: 500px;
+        font-size: 0.93em;
+    }
+
+    .h2_title {
+        font-size: 1.1em;
+    }
+
+    #fetchLogsBtn.small-btn {
+        font-size: 0.95em;
+        padding: 0.4em 0.7em;
+        min-width: 70px;
+        max-width: 120px;
+    }
+}
+
+/* Logo arriba a la derecha */
+.corner-logo {
+    position: absolute;
+    top: 10px;
+    left: 30px;
+    right: auto;
+    height: 250px;
+    opacity: 0.18;
+    z-index: 1;
+    pointer-events: none;
+}
+
+/* Imagen decorativa abajo a la derecha */
+.corner-bg {
+    position: absolute;
+    bottom: -20px;
+    right: 11px;
+    height: 200px;
+    opacity: 0.18;
+    z-index: 1;
+    pointer-events: none;
+}
+
+@media (max-width: 800px) {
+    .corner-logo {
+        top: 10px;
+        left: 10px;
+        right: auto;
+        height: 56px;
+    }
+
+    .corner-bg {
+        height: 50px;
+        right: 6px;
+        bottom: 6px;
+    }
 }
