@@ -1,6 +1,9 @@
-import requests
-from server.config.settings import settings
+import torch
+from diffusers import DiffusionPipeline
 from server.utils.translate import translate_to_en
+import io
+import os
+import datetime
 
 def generate_image_huggingface(
     topic: str,
@@ -8,32 +11,28 @@ def generate_image_huggingface(
     voice: str,
     company_info: str = "",
     language: str = "en"
-) -> bytes:
+) -> str:
     """
-    Generates an image using the Hugging Face Diffusers API based on the provided parameters.
-    Returns the generated image bytes.
+    Generates an image using a local Stable Diffusion pipeline.
+    Saves the image to a file and returns its URL.
     """
-    api_key = settings.HUGGINGFACE_API_KEY
-    # Free models for text-to-image generation:
-    #model_id = "runwayml/stable-diffusion-v1-5"
-    #model_id = "stabilityai/stable-diffusion-2"
-    #model_id = "runwayml/stable-diffusion-v1-5"
-    model_id = "prompthero/openjourney"
-    # model_id = "runwayml/stable-diffusion-v1-5"
-    # model_id = "dreamlike-art/dreamlike-photoreal-2.0"
-    # model_id = "stabilityai/stable-diffusion-2-1"
-    # model_id = "stabilityai/stable-diffusion-2-base"
-    # model_id = "stabilityai/sdxl-turbo"
+    model_id = "stabilityai/stable-diffusion-2-1-base"
     
-    # Traduce los campos al inglés si es necesario
-    topic_en = translate_to_en(topic)
-    voice_en = translate_to_en(voice)
-    company_info_en = translate_to_en(company_info) if company_info else ""
+    # Check for CUDA GPU and set device, otherwise use CPU
+    device = "cuda" if torch.cuda.is_available() else "cpu"
+    
+    # Load the pipeline from local cache or download if not present
+    # For ldm-text2im-large-256, float32 is usually sufficient and avoids issues with float16 on CPU
+    pipe = DiffusionPipeline.from_pretrained(model_id, torch_dtype=torch.float32)
+    pipe = pipe.to(device)
 
-    # Añade el idioma de salida al prompt para orientar el estilo si es relevante
+    # Translate the inputs to English
+    topic_en = topic
+    voice_en = voice
+    company_info_en = company_info if company_info else ""
+
     language_str = f"Output language: {language}. " if language and language != "en" else ""
 
-    # Build a powerful, detailed prompt in English for a highly realistic image, including company info if provided
     prompt = (
         f"Ultra-realistic, highly detailed illustration for {platform}. "
         f"Topic: {topic_en}. "
@@ -43,32 +42,25 @@ def generate_image_huggingface(
         prompt += f"Company info: {company_info_en}. "
     prompt += language_str
     prompt += (
-        "Photorealistic, intricate textures, vivid colors, sharp focus, natural lighting, "
-        "cinematic composition, lifelike details, realistic proportions, 8k resolution, "
-        "masterpiece, trending on artstation, hyper-detailed, professional quality. "
-        "Generate an attractive and visually stunning image."
+        "cinematic, sharp focus, 8k resolution, masterpiece, professional quality."
     )
 
-    response = requests.post(
-        f"https://api-inference.huggingface.co/models/{model_id}",
-        headers={
-            "Authorization": f"Bearer {api_key}",
-            "Accept": "image/png"
-        },
-        json={
-            "inputs": prompt,
-        },
-        timeout=60
-    )
+    # Generate the image
+    image = pipe(prompt).images[0]
 
-    if response.status_code == 200:
-        print(response.status_code)
-        if response.status_code == 200:
-            with open("output.png", "wb") as f:
-                f.write(response.content)
-        return response.content  # Return the image bytes
-    else:
-        try:
-            raise Exception(str(response.json()))
-        except Exception:
-            raise Exception(f"Error {response.status_code}: {response.text}")
+    # Define the directory to save images
+    # This path is relative to the server's root, which is /app in the Docker container
+    output_dir = "/app/client/static/generated_images"
+    os.makedirs(output_dir, exist_ok=True)
+
+    # Generate a unique filename
+    timestamp = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
+    filename = f"image_{timestamp}.png"
+    file_path = os.path.join(output_dir, filename)
+
+    # Save the image
+    image.save(file_path)
+
+    # Return the URL relative to the static files served by FastAPI
+    image_url = f"/static/generated_images/{filename}"
+    return image_url

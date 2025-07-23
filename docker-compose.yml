@@ -1,5 +1,3 @@
-version: "3.9"
-
 services:
   backend:
     build:
@@ -16,19 +14,22 @@ services:
     dns:
       - 8.8.8.8
       - 1.1.1.1
+    dns_search: .
     networks:
-      - app-net  # 👈 Añadido
+      - app-net
 
   libretranslate:
     image: libretranslate/libretranslate
     container_name: libretranslate
-    expose:
-      - "5000"
     ports:
       - "5000:5000"
-    restart: unless-stopped
+    environment:
+      - PORT=5000
+    command: ["--load-only", "en,es"]
+    restart: on-failure
+    dns_search: .
     networks:
-      - app-net  # 👈 Añadido
+      - app-net
 
 networks:
   app-net:

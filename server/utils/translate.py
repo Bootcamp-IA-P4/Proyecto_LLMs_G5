@@ -1,13 +1,40 @@
 import requests
-from libretranslatepy import LibreTranslateAPI
+import time
 
-lt = LibreTranslateAPI("http://libretranslate:5000/")
+def detect_language(text: str, retries: int = 3, delay: float = 2.0) -> str:
+    for attempt in range(retries):
+        try:
+            response = requests.post(
+                "http://libretranslate:5000/detect",
+                json={"q": text}
+            )
+            response.raise_for_status()
+            return response.json()[0]["language"]
+        except requests.exceptions.ConnectionError as e:
+            if attempt < retries - 1:
+                time.sleep(delay)
+            else:
+                raise e
 
-def detect_language(text: str) -> str:
-    return lt.detect(text)[0]['language']
-
-def translate_to_en(text: str) -> str:
-    detected_lang = detect_language(text)
+def translate_to_en(text: str, retries: int = 3, delay: float = 2.0) -> str:
+    detected_lang = detect_language(text, retries=retries, delay=delay)
     if detected_lang == "en":
         return text
-    return lt.translate(text, detected_lang, "en")
+    for attempt in range(retries):
+        try:
+            response = requests.post(
+                "http://libretranslate:5000/translate",
+                json={
+                    "q": text,
+                    "source": detected_lang,
+                    "target": "en",
+                    "format": "text"
+                }
+            )
+            response.raise_for_status()
+            return response.json()["translatedText"]
+        except requests.exceptions.ConnectionError as e:
+            if attempt < retries - 1:
+                time.sleep(delay)
+            else:
+                raise e

@@ -19,3 +19,7 @@ openai
 jinja2
 bcrypt==4.0.1
 passlib==1.7.4
+torch
+diffusers
+transformers
+accelerate

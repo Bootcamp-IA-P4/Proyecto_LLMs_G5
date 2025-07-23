@@ -25,18 +25,16 @@ async def generate_content(request: ContentRequest, user_id: UUID):
 
     # Nueva generación de imagen
     try:
-        imagen_bytes = generate_image_huggingface(
+        image_url = generate_image_huggingface(
             topic=request.topic,
             platform=request.platform,
             voice=request.audience,           # Usamos audience como voice
             company_info="",                  # Puede ser nulo o vacío
             language=request.language         # Pasamos el idioma de salida
         )
-        imagen_base64 = base64.b64encode(imagen_bytes).decode("utf-8")
-        imagen_dataurl = f"data:image/webp;base64,{imagen_base64}"
     except Exception as e:
         print(f"❌ Error generating image: {e}")
-        imagen_dataurl = None
+        image_url = None
 
     # Guardar en base de datos
     supabase = get_supabase()
@@ -47,7 +45,7 @@ async def generate_content(request: ContentRequest, user_id: UUID):
         "language": request.language,
         "model": model_used,
         "text_content": generated_text,
-        "image_url": None
+        "image_url": image_url
     }
 
     print("💾 Saving to Supabase...")
@@ -64,7 +62,7 @@ async def generate_content(request: ContentRequest, user_id: UUID):
 
     return ContentResponse(
         text_content=generated_text,
-        image_url=imagen_dataurl
+        image_url=image_url
     )
 
 
