@@ -8,7 +8,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY server /app/server
 COPY client /app/client
 
-RUN apt-get update && apt-get install -y iputils-ping curl
+RUN apt-get update && apt-get install -y --no-install-recommends iputils-ping curl ca-certificates && rm -rf /var/lib/apt/lists/*
 
 EXPOSE 8000
 
