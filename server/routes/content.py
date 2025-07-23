@@ -10,12 +10,14 @@ router = APIRouter()
 
 @router.post("/generate", response_model=ContentResponse)
 async def generate_post(
-    request: ContentRequest,
+    request_data: ContentRequest,
+    # Debugging: Print the authorization header
+    request: Request,
     current_user: UUID = Depends(get_current_user)
 ):
     """Generar contenido de texto e imagen"""
-    try:
-        result = await generate_content(request, current_user)
+    try:        
+        result = await generate_content(request_data, current_user)
         return result
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

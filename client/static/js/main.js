@@ -1,3 +1,7 @@
+document.addEventListener("DOMContentLoaded", function() {
+    // ...todo tu código JS aquí...
+//const { Debug } = require("@prisma/client/runtime/library");
+
 function getToken() {
     return localStorage.getItem("access_token");
 }

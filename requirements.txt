@@ -5,7 +5,6 @@ annotated-types
 anyio
 arxiv
 attrs
-bcrypt
 certifi
 cffi
 charset-normalizer
@@ -55,7 +54,6 @@ networkx
 numpy
 orjson
 packaging
-passlib
 pillow
 postgrest
 propcache
@@ -109,3 +107,5 @@ xmltodict
 yarl
 zstandard
 openai
+bcrypt==4.0.1
+passlib==1.7.4
