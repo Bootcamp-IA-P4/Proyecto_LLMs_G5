@@ -23,6 +23,7 @@ async def generate_content(request: ContentRequest, user_id: UUID):
         print(f"❌ Error generating text: {e}")
         raise Exception(f"Text generation failed: {str(e)}")
     # Si el usuario solicita imagen:
+    image_url = None
     image_base64 = None
     if getattr(request, "include_image", False):
         pipeline_result = run_pipeline(
@@ -35,6 +36,7 @@ async def generate_content(request: ContentRequest, user_id: UUID):
             include_image=True,
             image_prompt=getattr(request, "image_prompt", None)           
         )
+        image_url = pipeline_result.get("image_url")
         image_bytes = pipeline_result.get("image")
         if image_bytes:
             image_base64 = "data:image/png;base64," + base64.b64encode(image_bytes).decode("utf-8")
@@ -49,7 +51,7 @@ async def generate_content(request: ContentRequest, user_id: UUID):
         "language": request.language,
         "model": model_used,
         "text_content": generated_text,
-        "image_url": None
+        "image_url": image_url
     }
 
     print("💾 Saving to Supabase...")
@@ -66,7 +68,7 @@ async def generate_content(request: ContentRequest, user_id: UUID):
 
     return ContentResponse(
         text_content=generated_text,
-        image_url=image_base64
+        image_url=image_url or image_base64
     )
 
 

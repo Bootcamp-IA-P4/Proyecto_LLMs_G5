@@ -52,9 +52,11 @@
                 <option value="gemma2-9b-it">Gemma</option>
             </select>
             <input type="text" name="company_info" placeholder="Información de empresa/persona (opcional)">
-            <div style="margin-bottom: 1em;">
-                <input type="checkbox" id="include_image" name="include_image">
-                <label for="include_image">Generar imagen</label>
+            <div class="checkbox-row">
+                <label class="checkbox-label" for="include_image">
+                    <input type="checkbox" id="include_image" name="include_image">
+                    Generar imagen
+                </label>
             </div>
             <div id="imagePromptDiv" style="display:none; margin-bottom: 1em;">
                 <input type="text" id="image_prompt" name="image_prompt" placeholder="Prompt específico para la imagen (opcional)">

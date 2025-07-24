@@ -15,4 +15,5 @@ supabase
 uvicorn
 pydantic[email]
 jinja2
-googletrans
+deep_translator
+cloudinary 

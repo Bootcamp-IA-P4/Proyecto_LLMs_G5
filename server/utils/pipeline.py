@@ -2,6 +2,7 @@ from typing import Dict, Any, Optional
 from server.generators.text import generate_text
 from server.generators.image import ImageGenerator
 from deep_translator import GoogleTranslator
+from server.utils.cloudinary import upload_image_bytes
 
 def translate_text(texto):
     return GoogleTranslator(source='auto', target='en').translate(texto)
@@ -34,6 +35,10 @@ def run_pipeline(
         prompt_img_en = translate_text(prompt_img)
         image_generator = ImageGenerator()
         image_bytes = image_generator.generate_image(prompt_img_en)
-        results["image"] = image_bytes if image_bytes else None
+        if image_bytes:
+            image_url = upload_image_bytes(image_bytes)
+            results["image_url"] = image_url
+        else:
+            results["image"] = None
 
     return results

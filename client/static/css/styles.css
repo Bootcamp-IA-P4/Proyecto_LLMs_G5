@@ -557,3 +557,63 @@ a:hover {
     display: block;
 }
 
+.checkbox-row {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    margin-bottom: 1em;
+    width: auto;
+}
+
+.checkbox-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5em;
+    font-size: 1.05em;
+    cursor: pointer;
+    user-select: none;
+    font-weight: 500;
+    margin-bottom: 0;
+    line-height: 1;
+    padding: 0.3em 1em 0.3em 0.6em;
+    border-radius: 20px;
+    border: 2px solid var(--accent);
+    background: #fff;
+    transition: background 0.2s, border 0.2s;
+}
+
+.checkbox-label input[type="checkbox"] {
+    appearance: none;
+    width: 1.2em;
+    height: 1.2em;
+    border: 2px solid var(--accent);
+    border-radius: 50%;
+    margin: 0 0.5em 0 0;
+    outline: none;
+    cursor: pointer;
+    background: #fff;
+    transition: background 0.2s, border 0.2s;
+    position: relative;
+}
+
+.checkbox-label input[type="checkbox"]:checked {
+    background: var(--accent);
+    border-color: var(--accent);
+}
+
+.checkbox-label input[type="checkbox"]:checked::after {
+    content: '';
+    display: block;
+    width: 0.6em;
+    height: 0.6em;
+    background: #fff;
+    border-radius: 50%;
+    position: absolute;
+    top: 0.25em;
+    left: 0.25em;
+}
+
+.checkbox-label:hover {
+    background: #ffe5db;
+    border-color: #ff6333;
+}
