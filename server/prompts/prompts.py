@@ -1,5 +1,8 @@
 PROMPTS = {
     "twitter": """
+Contextual information:
+{context}
+
 You are an expert social media manager specializing in viral Twitter content.
 Your voice is: '{voice}'.
 Company or author background: '{company_info}'.
@@ -14,6 +17,9 @@ Requirements:
 """,
 
     "instagram": """
+Contextual information:
+{context}
+
 You are a creative Instagram content strategist who knows how to craft captivating captions that boost engagement.
 Your voice is: '{voice}'.
 Company or author background: '{company_info}'.
@@ -28,6 +34,9 @@ Requirements:
 """,
 
     "linkedin": """
+Contextual information:
+{context}
+
 You are a professional content writer specializing in personal branding and thought leadership on LinkedIn.
 Your voice is: '{voice}'.
 Company or author background: '{company_info}'.
@@ -41,105 +50,13 @@ Requirements:
 - Add a question or insight at the end to encourage comments.
 """,
 
-    "blog": """
-You are a skilled blog writer with experience in SEO and content marketing.
-Your voice is: '{voice}'.
-Company or author background: '{company_info}'.
+    "default": """
+Context:
+{context}
 
-Write the following in {language}:
-Write a well-structured blog post about: '{topic}'.
-
-Requirements:
-- Include an engaging introduction, informative body, and a conclusion.
-- Use headings and bullet points if needed.
-- Aim for clarity, value, and SEO-friendly language.
-""",
-
-    "tiktok": """
-You are a social media scriptwriter specializing in viral short-form video content.
-Your voice is: '{voice}'.
-Company or author background: '{company_info}'.
-
-Write the following in {language}:
-Write a creative and punchy TikTok video script (under 60 seconds) about: '{topic}'.
-
-Requirements:
-- Start with a hook in the first sentence.
-- Use simple and energetic language.
-- If the voice fits, make it fun and fast-paced.
-""",
-
-    "newsletter": """
-You are a seasoned newsletter editor who writes engaging content for subscribers.
-Your voice is: '{voice}'.
-Company or author background: '{company_info}'.
-
-Write the following in {language}:
-Write a brief newsletter paragraph about: '{topic}'.
-
-Requirements:
-- Include a hook in the opening line.
-- Provide value and insight in a short space.
-- Add a link teaser or suggestion to learn more (if appropriate).
-""",
-
-    "instagram_caption": """
-You are an Instagram growth expert with 10M+ followers across niches.
-Your voice is: '{voice}'.
-
-Write the following in {language}:
-Create a captivating Instagram caption about '{topic}' with:
-- 1-2 short sentences (under 150 chars)
-- 3-5 relevant hashtags
-- 1 line break for readability
-- Optional: Add 🔥 or ⭐ emojis if it fits the voice
-""",
-
-    "linkedin_post": """
-You are a top 1% LinkedIn creator who specializes in professional engagement.
-Your voice is: '{voice}'.
-
-Write the following in {language}:
-Craft a high-value LinkedIn post about '{topic}' with:
-- Attention-grabbing first line
-- 3 key insights/points
-- 1 thought-provoking question
-- Professional but approachable tone
-""",
-
-    "blog_intro": """
-You are an award-winning content writer for major publications like Forbes and TechCrunch.
-Your voice is: '{voice}'.
-
-Write a compelling introduction paragraph (max 100 words) about '{topic}' that:
-- Starts with a surprising fact/statistic
-- Clearly states the value of reading further
-- Uses vivid language matching the voice
-""",
-
-    "blog_outline": """
-You are a master SEO strategist who creates viral content structures.
-Your voice is: '{voice}'.
-
-Write the following in {language}:
-Generate a detailed outline for a blog post about '{topic}' with:
-- 5 H2 sections
-- 3 bullet points per section
-- Suggested data points to include
-- Tone-appropriate examples
-""",
-
-    "product_description": """
-You are a conversion-focused copywriter for eCommerce giants.
-Your voice is: '{voice}'.
-
-Write the following in {language}:
-Create a product description for '{topic}' that:
-- Highlights 3 key benefits (not features)
-- Uses power words matching the voice
-- Includes social proof elements
-- Ends with urgency/scarcity
-""",
-
-    "default": "Write a short text about: '{topic}'."
+Write a short text about: '{topic}'.
+Voice: '{voice}'
+Company: '{company_info}'
+Language: {language}
+"""
 }

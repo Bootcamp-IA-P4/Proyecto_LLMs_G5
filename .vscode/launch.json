@@ -1,0 +1,19 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+      {
+        "name": "Debug FastAPI (Uvicorn)",
+        "type": "debugpy",
+        "request": "launch",
+        "module": "uvicorn",
+        "args": [
+          "server.main:app",
+          "--reload"
+        ],
+        "jinja": true,
+        "justMyCode": true,
+        "console": "integratedTerminal"
+      }
+    ]
+  }
+  

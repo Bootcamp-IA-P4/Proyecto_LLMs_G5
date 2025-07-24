@@ -4,7 +4,7 @@ import os
 from dotenv import load_dotenv
 import traceback
 import logging  # Añade esto
-from server.rag_chain import ScientificRAG  # Asegúrate de que este import sea correcto
+from server.RAG.rag_chain import ScientificRAG  # Asegúrate de que este import sea correcto
 
 # Configura logging
 logging.basicConfig(level=logging.INFO)
@@ -30,7 +30,7 @@ app.add_middleware(
 
 # Inicialización RAG
 try:
-    rag = ScientificRAG(os.path.join("server", "vectorstore"))  # Ruta multiplataforma
+    rag = ScientificRAG(os.path.join("server", "RAG"  ,"server", "vectorstore"))  # Ruta multiplataforma
 except Exception as e:
     logger.error(f"❌ Error al inicializar RAG: {str(e)}")
     traceback.print_exc()
@@ -38,14 +38,15 @@ except Exception as e:
 
 # Un solo endpoint /explain
 @app.get("/explain")
-async def explain_science(topic: str):
+async def explain_science(social_network: str, topic: str, company_info: str, voice: str, language: str):
     if not rag:
         return {"error": "Sistema RAG no disponible"}, 500
-    
     try:
+        rag.initialize_prompt(social_network, topic, company_info, voice, language)
         result = rag.explain_concept(topic)
         return {
             "topic": topic,
+            "social_network": social_network,
             "explanation": result["answer"],
             "sources": result["sources"]
         }
