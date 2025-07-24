@@ -38,10 +38,6 @@ app.include_router(content_router, prefix="/api/content", tags=["content"])
 async def root(request: Request):
     return templates.TemplateResponse("index.html", {"request": request})
 
-if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
-
 
 @app.get("/login")
 async def login_page(request: Request):
@@ -50,3 +46,7 @@ async def login_page(request: Request):
 @app.get("/register")
 async def register_page(request: Request):
     return templates.TemplateResponse("register.html", {"request": request})
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8000)

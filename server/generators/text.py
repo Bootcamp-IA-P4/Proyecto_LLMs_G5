@@ -2,7 +2,6 @@ from langchain_groq import ChatGroq
 import os
 from dotenv import load_dotenv
 from langchain_core.prompts import ChatPromptTemplate
-from server.generators.image import generate_image_huggingface
 
 script_dir = os.path.dirname(__file__)
 project_root = os.path.abspath(os.path.join(script_dir, "..", ".."))

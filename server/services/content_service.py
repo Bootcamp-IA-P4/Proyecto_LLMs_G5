@@ -2,7 +2,7 @@ import base64
 from server.config.settings import settings
 from server.utils.database import get_supabase
 from server.generators.text import generate_text
-from server.generators.image import generate_image_huggingface
+from server.generators.image import generate_image_fal_ai
 from server.models.post import ContentRequest, ContentResponse
 from uuid import UUID
 
@@ -25,7 +25,7 @@ async def generate_content(request: ContentRequest, user_id: UUID):
 
     # Nueva generación de imagen
     try:
-        image_url = generate_image_huggingface(
+        image_url = generate_image_fal_ai(
             topic=request.topic,
             platform=request.platform,
             voice=request.audience,           # Usamos audience como voice

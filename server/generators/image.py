@@ -1,66 +1,95 @@
-import torch
-from diffusers import DiffusionPipeline
-from server.utils.translate import translate_to_en
-import io
 import os
 import datetime
+from nbconvert import export
+import requests
+from PIL import Image
+from io import BytesIO
+from dotenv import load_dotenv
+import fal_client
 
-def generate_image_huggingface(
-    topic: str,
-    platform: str,
-    voice: str,
-    company_info: str = "",
-    language: str = "en"
-) -> str:
-    """
-    Generates an image using a local Stable Diffusion pipeline.
-    Saves the image to a file and returns its URL.
-    """
-    model_id = "stabilityai/stable-diffusion-2-1-base"
-    
-    # Check for CUDA GPU and set device, otherwise use CPU
-    device = "cuda" if torch.cuda.is_available() else "cpu"
-    
-    # Load the pipeline from local cache or download if not present
-    # For ldm-text2im-large-256, float32 is usually sufficient and avoids issues with float16 on CPU
-    pipe = DiffusionPipeline.from_pretrained(model_id, torch_dtype=torch.float32)
-    pipe = pipe.to(device)
+# Load environment variables from .env file
+load_dotenv()
 
-    # Translate the inputs to English
-    topic_en = topic
-    voice_en = voice
-    company_info_en = company_info if company_info else ""
 
-    language_str = f"Output language: {language}. " if language and language != "en" else ""
+# Get FAL_API_KEY from environment variables
+# FAL_API_KEY = "8360d3ea-b84d-45a0-86ec-926dc734d5da:35393eab9ff3118a080b65af5c6ed895"
+# fal = Fal(token=FAL_API_KEY)
 
-    prompt = (
-        f"Ultra-realistic, highly detailed illustration for {platform}. "
-        f"Topic: {topic_en}. "
-        f"Audience/Voice: {voice_en}. "
-    )
-    if company_info_en:
-        prompt += f"Company info: {company_info_en}. "
-    prompt += language_str
-    prompt += (
-        "cinematic, sharp focus, 8k resolution, masterpiece, professional quality."
-    )
+handler = fal_client.submit(
+    "fal-ai/flux/dev",
+    arguments={"prompt": "a flying car"},
+)
+result = handler.get()
+image_url = result["images"][0]["url"]
 
-    # Generate the image
-    image = pipe(prompt).images[0]
+image = Image.open(BytesIO(requests.get(image_url).content))
+image.show()
 
-    # Define the directory to save images
-    # This path is relative to the server's root, which is /app in the Docker container
-    output_dir = "/app/client/static/generated_images"
-    os.makedirs(output_dir, exist_ok=True)
+# def generate_image_fal_ai(
+#     topic: str,
+#     platform: str,
+#     voice: str,
+#     company_info: str = "",
+#     language: str = "en"
+# ) -> str:
+#     """
+#     Generates an image using the fal.ai API.
+#     Saves the image to a file and returns its URL.
+#     """
+#     if not FAL_API_KEY:
+#         raise ValueError("FAL_API_KEY not found in environment variables. Please set it.")
 
-    # Generate a unique filename
-    timestamp = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
-    filename = f"image_{timestamp}.png"
-    file_path = os.path.join(output_dir, filename)
+#     # Construct the prompt for fal.ai
+#     prompt = (
+#         f"Ultra-realistic, highly detailed illustration for {platform}. "
+#         f"Topic: {topic}. "
+#         f"Audience/Voice: {voice}. "
+#     )
+#     if company_info:
+#         prompt += f"Company info: {company_info}. "
+#     prompt += (
+#         "cinematic, sharp focus, 8k resolution, masterpiece, professional quality."
+#     )
 
-    # Save the image
-    image.save(file_path)
+#     # Call fal.ai API
+#     headers = {
+#         "Authorization": f"Key {FAL_API_KEY}",
+#         "Content-Type": "application/json"
+#     }
+#     payload = {
+#         "model_name": "stable-diffusion-v1-5", # You can choose other models if needed
+#         "prompt": prompt,
+#         "num_inference_steps": 20,
+#         "guidance_scale": 7.5
+#     }
+#     response = requests.post("https://queue.fal.run/", headers=headers, json=payload)
+#     response.raise_for_status() # Raise an exception for HTTP errors
 
-    # Return the URL relative to the static files served by FastAPI
-    image_url = f"/static/generated_images/{filename}"
-    return image_url
+#     image_url_from_fal = response.json()["image_url"]
+
+#     # Download the image from the URL provided by fal.ai
+#     image_response = requests.get(image_url_from_fal)
+#     image_response.raise_for_status()
+#     image = Image.open(BytesIO(image_response.content))
+
+#     # Define the directory to save images
+#     # This path is relative to the project root
+#     # We need to go up two directories from image.py (server/generators) to the project root,
+#     # then navigate to client/static/generated_images
+#     current_dir = os.path.dirname(__file__)
+#     project_root = os.path.abspath(os.path.join(current_dir, "..", ".."))
+#     output_dir = os.path.join(project_root, "client", "static", "generated_images")
+#     os.makedirs(output_dir, exist_ok=True)
+
+#     # Generate a unique filename
+#     timestamp = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
+#     filename = f"image_{timestamp}.png"
+#     file_path = os.path.join(output_dir, filename)
+
+#     # Save the image
+#     image.save(file_path)
+
+#     # Return the URL relative to the static files served by FastAPI
+#     # This URL is relative to the 'static' directory configured in FastAPI
+#     image_url = f"/static/generated_images/{filename}"
+#     return image_url
