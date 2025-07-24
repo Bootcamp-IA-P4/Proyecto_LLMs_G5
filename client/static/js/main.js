@@ -73,7 +73,11 @@ if (document.getElementById("contentForm")) {
             if (formData.get("company_info")) {
                 payload.company_info = formData.get("company_info");
             }
-
+            payload.include_image = document.getElementById("include_image").checked;
+            const imagePromptValue = document.getElementById("image_prompt").value;
+            if (imagePromptValue) {
+                payload.image_prompt = imagePromptValue;
+            }
             const res = await fetch("/api/content/generate", {
                 method: "POST",
                 headers: {
@@ -102,6 +106,13 @@ if (document.getElementById("contentForm")) {
                 }
 
                 document.getElementById("result").innerHTML = `<h3>Resultado:</h3>${content}`;
+                // Mostrar la imagen 
+                const imageDiv = document.getElementById('image-result');
+                if (data.image_url) {
+                    imageDiv.innerHTML = `<img src="${data.image_url}" alt="Imagen generada" class="generated-image">`;
+                } else {
+                    imageDiv.innerHTML = ""; 
+                }
                 document.getElementById("actionsBtns").style.display = "flex";
                 showResetBtn(true);
             } else {
@@ -110,6 +121,7 @@ if (document.getElementById("contentForm")) {
                 showResetBtn(false);
             }
         } catch (err) {
+            document.getElementById("loader").style.display = "none";
             document.getElementById("result").innerHTML = `<span class="error">Error de red</span>`;
             document.getElementById("actionsBtns").style.display = "none";
             showResetBtn(false);
@@ -270,3 +282,7 @@ if (document.getElementById("logsNavBtn")) {
         window.location.href = "/langsmith";
     };
 }
+
+document.getElementById('include_image').addEventListener('change', function() {
+document.getElementById('imagePromptDiv').style.display = this.checked ? 'block' : 'none';
+});

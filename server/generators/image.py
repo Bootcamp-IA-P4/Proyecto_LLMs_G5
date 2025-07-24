@@ -25,6 +25,9 @@ class ImageGenerator:
         steps: int = 30,
         cfg_scale: int = 7,
         ) -> Optional[bytes]:
+        if not self.api_key or not self.api_key.startswith("sk-"):
+            print("❌ API KEY de Stability.ai no configurada o inválida. No se generará imagen.")
+            return None
         headers = {
             "Authorization": f"Bearer {self.api_key}",
             "Accept": "image/*"
@@ -43,7 +46,8 @@ class ImageGenerator:
         if style:
             payload["style"] = style
         try:
-            response = requests.post(self.api_url, headers=headers, json=payload)
+            files = {k: (None, str(v)) for k, v in payload.items()}
+            response = requests.post(self.api_url, headers=headers, files=files)
             if response.status_code == 200 and response.headers.get("Content-Type", "").startswith("image/"):
                 return response.content
             else:
