@@ -92,7 +92,7 @@ if (document.getElementById("contentForm")) {
                 let content = data.text_content;
                 const selectedPlatform = formData.get("platform");
 
-                // Si es blog, formateamos mejor el contenido
+                // Formateamos mejor el contenido para las generaciones de blog
                 if (selectedPlatform === "blog") {
                     content = content
                         .replace(/^# (.*$)/gim, '<h1>$1</h1>')
@@ -137,11 +137,10 @@ if (document.getElementById("logoutBtn")) {
     };
 }
 
-// Copiar contenido al portapapeles
+// Podemos copiar contenido al portapapeles
 if (document.getElementById("copyBtn")) {
     document.getElementById("copyBtn").onclick = function() {
         const resultDiv = document.getElementById("result");
-        // Extrae solo el texto, sin etiquetas HTML
         const tempElement = document.createElement("div");
         tempElement.innerHTML = resultDiv.innerHTML;
         const text = tempElement.innerText;
@@ -151,11 +150,10 @@ if (document.getElementById("copyBtn")) {
     };
 }
 
-// Exportar como .md
+// Podemos exportar como .md
 if (document.getElementById("exportMdBtn")) {
     document.getElementById("exportMdBtn").onclick = function() {
         const resultDiv = document.getElementById("result");
-        // Extrae solo el texto, sin etiquetas HTML
         const tempElement = document.createElement("div");
         tempElement.innerHTML = resultDiv.innerHTML;
         const text = tempElement.innerText;
@@ -167,11 +165,10 @@ if (document.getElementById("exportMdBtn")) {
     };
 }
 
-// Exportar como .txt
+// Podemos exportar como .txt
 if (document.getElementById("exportTxtBtn")) {
     document.getElementById("exportTxtBtn").onclick = function() {
         const resultDiv = document.getElementById("result");
-        // Extrae solo el texto, sin etiquetas HTML
         const tempElement = document.createElement("div");
         tempElement.innerHTML = resultDiv.innerHTML;
         const text = tempElement.innerText;
@@ -229,17 +226,13 @@ if (document.getElementById("fetchLogsBtn")) {
                     </thead>
                     <tbody>`;
                 data.runs.forEach(run => {
-                    // Modelo
                     let model = run.extra?.invocation_params?.ls_model_name || run.extra?.invocation_params?.model || "-";
-                    // Topic (si existe)
                     let topic = run.inputs?.messages?.[0]?.[0]?.kwargs?.content?.match(/about: '([^']+)'/)?.[1]
                         || run.inputs?.topic
                         || "-";
-                    // Prompt (input)
                     let prompt = run.inputs?.messages?.[0]?.[0]?.kwargs?.content
                         || run.inputs?.topic
                         || JSON.stringify(run.inputs || {}, null, 2);
-                    // Output (respuesta generada)
                     let output = "";
                     if (run.outputs?.generations?.[0]?.[0]?.text) {
                         output = run.outputs.generations[0][0].text;
@@ -250,7 +243,6 @@ if (document.getElementById("fetchLogsBtn")) {
                     } else {
                         output = "-";
                     }
-                    // Limitar a 100 caracteres y agregar "..." si es más largo
                     function truncate(str, n = 100) {
                         return (str && str.length > n) ? str.slice(0, n) + "..." : str;
                     }
