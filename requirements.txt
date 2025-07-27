@@ -17,3 +17,6 @@ supabase
 uvicorn
 pydantic[email]
 jinja2
+beautifulsoup4
+sentence-transformers
+faiss-cpu
