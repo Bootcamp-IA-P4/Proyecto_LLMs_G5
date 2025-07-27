@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Logs de LangSmith</title>
+    <link rel="stylesheet" href="{{ url_for('static', path='css/styles.css') }}">
+</head>
+
+<body class="langsmith-bg">
+    <nav class="navbar langsmith-navbar">
+        <span class="logo">Generador IA</span>
+        <div class="navbar-actions">
+            <button onclick="window.location.href='/'" type="button">Volver</button>
+            <button id="logoutBtn" type="button">Cerrar sesión</button>
+        </div>
+    </nav>
+    <div class="langsmith-container">
+        <h2 class="h2_title">Logs de LangSmith</h2>
+        <button id="fetchLogsBtn" class="small-btn">Cargar Logs</button>
+        <div id="logsOutput" class="langsmith-table"></div>
+    </div>
+    <script src="{{ url_for('static', path='js/main.js') }}"></script>
+</body>
+
+</html>
