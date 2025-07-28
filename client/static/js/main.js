@@ -377,3 +377,94 @@ if (document.getElementById("exportScienceTxtBtn")) {
         link.click();
     };
 }
+
+// Navegación a la utilidad de contenido científico para RRSS
+if (document.getElementById("scienceSocialNavBtn")) {
+    document.getElementById("scienceSocialNavBtn").onclick = function() {
+        window.location.href = "/science_social";
+    };
+}
+
+// Generar contenido científico para RRSS
+if (document.getElementById("scienceSocialForm")) {
+    document.getElementById("scienceSocialForm").onsubmit = async function(e) {
+        e.preventDefault();
+        document.getElementById("scienceSocialResult").innerHTML = "Generando...";
+        const formData = new FormData(this);
+        const params = new URLSearchParams({
+            social_network: formData.get("social_network"),
+            topic: formData.get("topic"),
+            company_info: formData.get("company_info"),
+            voice: formData.get("voice"),
+            language: formData.get("language")
+        });
+        try {
+            const res = await fetch(`/api/explain?${params.toString()}`);
+            const data = await res.json();
+            if (res.ok) {
+                let html = `<div class="science-result"><h3>Contenido generado:</h3><div class="blog-content"><p>${data.explanation.replace(/\n/g, "<br>")}</p></div>`;
+                if (data.sources && data.sources.length > 0) {
+                    html += `<div class="science-sources"><h4>Fuentes utilizadas:</h4><ul>`;
+                    data.sources.forEach(src => {
+                        html += `<li>
+                            <a href="${src.url}" target="_blank">${src.title}</a>
+                        </li>`;
+                    });
+                    html += `</ul></div>`;
+                }
+                html += `</div>`;
+                document.getElementById("scienceSocialResult").innerHTML = html;
+                document.getElementById("scienceSocialActions").style.display = "flex";
+            } else {
+                document.getElementById("scienceSocialResult").innerHTML = `<span class="error">${data.detail || "Error generando contenido"}</span>`;
+                document.getElementById("scienceSocialActions").style.display = "none";
+            }
+        } catch (err) {
+            document.getElementById("scienceSocialResult").innerHTML = `<span class="error">Error de red</span>`;
+            document.getElementById("scienceSocialActions").style.display = "none";
+        }
+    };
+}
+
+// Copiar contenido científico para RRSS
+if (document.getElementById("copyScienceSocialBtn")) {
+    document.getElementById("copyScienceSocialBtn").onclick = function() {
+        const resultDiv = document.getElementById("scienceSocialResult");
+        const tempElement = document.createElement("div");
+        tempElement.innerHTML = resultDiv.innerHTML;
+        const text = tempElement.innerText;
+        navigator.clipboard.writeText(text)
+            .then(() => alert("¡Contenido copiado al portapapeles!"))
+            .catch(() => alert("No se pudo copiar el contenido."));
+    };
+}
+
+// Exportar como .md
+if (document.getElementById("exportScienceSocialMdBtn")) {
+    document.getElementById("exportScienceSocialMdBtn").onclick = function() {
+        const resultDiv = document.getElementById("scienceSocialResult");
+        const tempElement = document.createElement("div");
+        tempElement.innerHTML = resultDiv.innerHTML;
+        const text = tempElement.innerText;
+        const blob = new Blob([text], { type: "text/markdown" });
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = "contenido_cientifico_rrss.md";
+        link.click();
+    };
+}
+
+// Exportar como .txt
+if (document.getElementById("exportScienceSocialTxtBtn")) {
+    document.getElementById("exportScienceSocialTxtBtn").onclick = function() {
+        const resultDiv = document.getElementById("scienceSocialResult");
+        const tempElement = document.createElement("div");
+        tempElement.innerHTML = resultDiv.innerHTML;
+        const text = tempElement.innerText;
+        const blob = new Blob([text], { type: "text/plain" });
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = "contenido_cientifico_rrss.txt";
+        link.click();
+    };
+}
