@@ -241,7 +241,3 @@ Las contribuciones son bienvenidas. Por favor:
 3. Commit tus cambios (`git commit -m 'Agregar nueva característica'`)
 4. Push a la rama (`git push origin feature/nueva-caracteristica`)
 5. Abrir un Pull Request
-
-## 📞 Soporte
-
-Para soporte o preguntas, por favor abrir un issue en el repositorio del proyecto.
