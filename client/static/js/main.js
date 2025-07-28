@@ -73,7 +73,11 @@ if (document.getElementById("contentForm")) {
             if (formData.get("company_info")) {
                 payload.company_info = formData.get("company_info");
             }
-
+            payload.include_image = document.getElementById("include_image").checked;
+            const imagePromptValue = document.getElementById("image_prompt").value;
+            if (imagePromptValue) {
+                payload.image_prompt = imagePromptValue;
+            }
             const res = await fetch("/api/content/generate", {
                 method: "POST",
                 headers: {
@@ -88,7 +92,7 @@ if (document.getElementById("contentForm")) {
                 let content = data.text_content;
                 const selectedPlatform = formData.get("platform");
 
-                // Si es blog, formateamos mejor el contenido
+                // Formateamos mejor el contenido para las generaciones de blog
                 if (selectedPlatform === "blog") {
                     content = content
                         .replace(/^# (.*$)/gim, '<h1>$1</h1>')
@@ -102,6 +106,13 @@ if (document.getElementById("contentForm")) {
                 }
 
                 document.getElementById("result").innerHTML = `<h3>Resultado:</h3>${content}`;
+                // Mostrar la imagen 
+                const imageDiv = document.getElementById('image-result');
+                if (data.image_url) {
+                    imageDiv.innerHTML = `<img src="${data.image_url}" alt="Imagen generada" class="generated-image">`;
+                } else {
+                    imageDiv.innerHTML = ""; 
+                }
                 document.getElementById("actionsBtns").style.display = "flex";
                 showResetBtn(true);
             } else {
@@ -110,6 +121,7 @@ if (document.getElementById("contentForm")) {
                 showResetBtn(false);
             }
         } catch (err) {
+            document.getElementById("loader").style.display = "none";
             document.getElementById("result").innerHTML = `<span class="error">Error de red</span>`;
             document.getElementById("actionsBtns").style.display = "none";
             showResetBtn(false);
@@ -125,11 +137,10 @@ if (document.getElementById("logoutBtn")) {
     };
 }
 
-// Copiar contenido al portapapeles
+// Podemos copiar contenido al portapapeles
 if (document.getElementById("copyBtn")) {
     document.getElementById("copyBtn").onclick = function() {
         const resultDiv = document.getElementById("result");
-        // Extrae solo el texto, sin etiquetas HTML
         const tempElement = document.createElement("div");
         tempElement.innerHTML = resultDiv.innerHTML;
         const text = tempElement.innerText;
@@ -139,11 +150,10 @@ if (document.getElementById("copyBtn")) {
     };
 }
 
-// Exportar como .md
+// Podemos exportar como .md
 if (document.getElementById("exportMdBtn")) {
     document.getElementById("exportMdBtn").onclick = function() {
         const resultDiv = document.getElementById("result");
-        // Extrae solo el texto, sin etiquetas HTML
         const tempElement = document.createElement("div");
         tempElement.innerHTML = resultDiv.innerHTML;
         const text = tempElement.innerText;
@@ -155,11 +165,10 @@ if (document.getElementById("exportMdBtn")) {
     };
 }
 
-// Exportar como .txt
+// Podemos exportar como .txt
 if (document.getElementById("exportTxtBtn")) {
     document.getElementById("exportTxtBtn").onclick = function() {
         const resultDiv = document.getElementById("result");
-        // Extrae solo el texto, sin etiquetas HTML
         const tempElement = document.createElement("div");
         tempElement.innerHTML = resultDiv.innerHTML;
         const text = tempElement.innerText;
@@ -217,17 +226,13 @@ if (document.getElementById("fetchLogsBtn")) {
                     </thead>
                     <tbody>`;
                 data.runs.forEach(run => {
-                    // Modelo
                     let model = run.extra?.invocation_params?.ls_model_name || run.extra?.invocation_params?.model || "-";
-                    // Topic (si existe)
                     let topic = run.inputs?.messages?.[0]?.[0]?.kwargs?.content?.match(/about: '([^']+)'/)?.[1]
                         || run.inputs?.topic
                         || "-";
-                    // Prompt (input)
                     let prompt = run.inputs?.messages?.[0]?.[0]?.kwargs?.content
                         || run.inputs?.topic
                         || JSON.stringify(run.inputs || {}, null, 2);
-                    // Output (respuesta generada)
                     let output = "";
                     if (run.outputs?.generations?.[0]?.[0]?.text) {
                         output = run.outputs.generations[0][0].text;
@@ -238,7 +243,6 @@ if (document.getElementById("fetchLogsBtn")) {
                     } else {
                         output = "-";
                     }
-                    // Limitar a 100 caracteres y agregar "..." si es más largo
                     function truncate(str, n = 100) {
                         return (str && str.length > n) ? str.slice(0, n) + "..." : str;
                     }
@@ -268,5 +272,108 @@ if (document.getElementById("fetchLogsBtn")) {
 if (document.getElementById("logsNavBtn")) {
     document.getElementById("logsNavBtn").onclick = function() {
         window.location.href = "/langsmith";
+    };
+}
+
+const includeImageCheckbox = document.getElementById('include_image');
+if (includeImageCheckbox) {
+    includeImageCheckbox.addEventListener('change', function() {
+        document.getElementById('imagePromptDiv').style.display = this.checked ? 'block' : 'none';
+    });
+}
+
+
+// Generar artículo científico
+
+if (document.getElementById("scienceNavBtn")) {
+    document.getElementById("scienceNavBtn").onclick = function() {
+        window.location.href = "/science";
+    };
+}
+
+if (document.getElementById("scienceForm")) {
+    document.getElementById("scienceForm").onsubmit = async function(e) {
+        e.preventDefault();
+        document.getElementById("scienceResult").innerHTML = "Generando...";
+        const formData = new FormData(this);
+        const payload = {
+            topic: formData.get("topic"),
+            audience: formData.get("audience"),
+            language: formData.get("language"),
+            model: formData.get("model"),
+            max_docs: Number(formData.get("max_docs")) || 3
+        };
+        try {
+            const res = await fetch("/api/science/generate", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": "Bearer " + getToken()
+                },
+                body: JSON.stringify(payload)
+            });
+            const data = await res.json();
+            if (res.ok) {
+                let html = `<div class="science-result"><h3>Artículo generado:</h3><div class="blog-content"><p>${data.text_content.replace(/\n/g, "<br>")}</p></div>`;
+                html += `<div class="science-sources"><h4>Fuentes utilizadas:</h4><ul>`;
+                data.sources.forEach(src => {
+                    html += `<li>
+                        <strong>${src.title}</strong> (${src.authors || "Sin autores"})<br>
+                        <a href="${src.url}" target="_blank">Ver paper</a>
+                        <br>Relevancia: ${src.relevance_score ? src.relevance_score.toFixed(2) : "-"}
+                    </li>`;
+                });
+                html += `</ul></div></div>`;
+                document.getElementById("scienceResult").innerHTML = html;
+                document.getElementById("scienceActions").style.display = "flex";
+            } else {
+                document.getElementById("scienceResult").innerHTML = `<span class="error">${data.detail || "Error generando artículo"}</span>`;
+                document.getElementById("scienceActions").style.display = "none";
+            }
+        } catch (err) {
+            document.getElementById("scienceResult").innerHTML = `<span class="error">Error de red</span>`;
+        }
+    };
+}
+// Copiar contenido científico
+if (document.getElementById("copyScienceBtn")) {
+    document.getElementById("copyScienceBtn").onclick = function() {
+        const resultDiv = document.getElementById("scienceResult");
+        const tempElement = document.createElement("div");
+        tempElement.innerHTML = resultDiv.innerHTML;
+        const text = tempElement.innerText;
+        navigator.clipboard.writeText(text)
+            .then(() => alert("¡Contenido copiado al portapapeles!"))
+            .catch(() => alert("No se pudo copiar el contenido."));
+    };
+}
+
+// Exportar como .md
+if (document.getElementById("exportScienceMdBtn")) {
+    document.getElementById("exportScienceMdBtn").onclick = function() {
+        const resultDiv = document.getElementById("scienceResult");
+        const tempElement = document.createElement("div");
+        tempElement.innerHTML = resultDiv.innerHTML;
+        const text = tempElement.innerText;
+        const blob = new Blob([text], { type: "text/markdown" });
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = "articulo_cientifico.md";
+        link.click();
+    };
+}
+
+// Exportar como .txt
+if (document.getElementById("exportScienceTxtBtn")) {
+    document.getElementById("exportScienceTxtBtn").onclick = function() {
+        const resultDiv = document.getElementById("scienceResult");
+        const tempElement = document.createElement("div");
+        tempElement.innerHTML = resultDiv.innerHTML;
+        const text = tempElement.innerText;
+        const blob = new Blob([text], { type: "text/plain" });
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = "articulo_cientifico.txt";
+        link.click();
     };
 }

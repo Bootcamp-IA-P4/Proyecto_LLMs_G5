@@ -9,8 +9,12 @@
 
 <body>
     <nav class="navbar">
-        <span class="logo">Generador IA</span>
+        <span class="logo">
+            <img src="{{ url_for('static', path='img/logo-cgai.png') }}" alt="Logo" class="logo-img">
+            ContentGenius AI
+        </span>
         <div class="navbar-actions">
+            <button id="scienceNavBtn" type="button">Contenido científico</button>
             <button id="logsNavBtn" type="button">Ver Logs LangSmith</button>
             <button id="logoutBtn" type="button">Cerrar sesión</button>
         </div>    
@@ -49,9 +53,24 @@
                 <option value="gemma2-9b-it">Gemma</option>
             </select>
             <input type="text" name="company_info" placeholder="Información de empresa/persona (opcional)">
+            <div class="checkbox-row">
+                <label class="checkbox-label" for="include_image">
+                    <input type="checkbox" id="include_image" name="include_image">
+                    Generar imagen
+                </label>
+            </div>
+            <div id="imagePromptDiv" style="display:none; margin-bottom: 1em;">
+                <input type="text" id="image_prompt" name="image_prompt" placeholder="Prompt específico para la imagen (opcional)">
+            </div>
             <button type="submit" class="button_gen">Generar</button>
         </form>
         <div id="result"></div>
+        <div id="loader" style="display:none; text-align:center; margin: 1em 0;">
+            <span>Generando contenido...</span>
+        </div>
+        <div id="image-result" style="margin-top: 20px;">
+
+        </div>
         <div class="actions" id="actionsBtns" style="display:none;">
             <button id="copyBtn" type="button">Copiar contenido</button>
             <button id="exportMdBtn" type="button">Exportar .md</button>

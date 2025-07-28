@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Generador Científico IA</title>
+    <link rel="stylesheet" href="{{ url_for('static', path='css/styles.css') }}">
+</head>
+
+<body>
+    <nav class="navbar">
+        <span class="logo">
+            <img src="{{ url_for('static', path='img/logo-cgai.png') }}" alt="Logo" class="logo-img">
+            ContentGenius AI
+        </span>
+        <div class="navbar-actions">
+            <button onclick="window.location.href='/'">Contenido Social</button>
+            <button id="logoutBtn" type="button">Cerrar sesión</button>
+        </div>
+    </nav>
+    <div class="science-container">
+        <h2 class="h2_title">Genera contenido científico con IA</h2>
+        <form id="scienceForm" class="science-form">
+            <input type="text" name="topic" placeholder="Tema científico (ej: CRISPR en biomedicina)" required>
+            <select name="audience" required>
+                <option value="general">General</option>
+                <option value="juvenil">Juvenil</option>
+                <option value="técnica">Técnica</option>
+            </select>
+            <select name="language" required>
+                <option value="es">Español</option>
+                <option value="en">Inglés</option>
+                <option value="fr">Francés</option>
+            </select>
+            <select name="model">
+                <option value="llama3-8b-8192">Llama 3</option>
+                <option value="gemma2-9b-it">Gemma</option>
+            </select>
+            <input type="number" name="max_docs" min="1" max="10" value="3"
+                placeholder="¿Cuántos artículos científicos buscar? (1-10)">
+            <button type="submit" class="button_gen">Generar artículo científico</button>
+        </form>
+        <div id="scienceResult"></div>
+        <div class="actions" id="scienceActions" style="display:none;">
+            <button id="copyScienceBtn" type="button">Copiar contenido</button>
+            <button id="exportScienceMdBtn" type="button">Exportar .md</button>
+            <button id="exportScienceTxtBtn" type="button">Exportar .txt</button>
+        </div>
+    </div>
+    <script src="{{ url_for('static', path='js/main.js') }}"></script>
+</body>
+
+</html>

@@ -2,7 +2,9 @@ from server.config.settings import settings
 from server.utils.database import get_supabase
 from server.generators.text import generate_text
 from server.models.post import ContentRequest, ContentResponse
+from server.utils.pipeline import run_pipeline
 from uuid import UUID
+import base64
 
 async def generate_content(request: ContentRequest, user_id: UUID):
     model_used = request.model if request.model and request.model.strip() else "llama3-8b-8192"
@@ -20,6 +22,25 @@ async def generate_content(request: ContentRequest, user_id: UUID):
     except Exception as e:
         print(f"❌ Error generating text: {e}")
         raise Exception(f"Text generation failed: {str(e)}")
+    # Si el usuario solicita imagen:
+    image_url = None
+    image_base64 = None
+    if getattr(request, "include_image", False):
+        pipeline_result = run_pipeline(
+            topic=request.topic,
+            platform=request.platform,
+            model_name=model_used,
+            voice=request.audience,
+            company_info="",
+            language=request.language,
+            include_image=True,
+            image_prompt=getattr(request, "image_prompt", None)           
+        )
+        image_url = pipeline_result.get("image_url")
+        image_bytes = pipeline_result.get("image")
+        if image_bytes:
+            image_base64 = "data:image/png;base64," + base64.b64encode(image_bytes).decode("utf-8")
+
 
     # Guardar en base de datos
     supabase = get_supabase()
@@ -30,7 +51,7 @@ async def generate_content(request: ContentRequest, user_id: UUID):
         "language": request.language,
         "model": model_used,
         "text_content": generated_text,
-        "image_url": None
+        "image_url": image_url
     }
 
     print("💾 Saving to Supabase...")
@@ -47,7 +68,7 @@ async def generate_content(request: ContentRequest, user_id: UUID):
 
     return ContentResponse(
         text_content=generated_text,
-        image_url=None
+        image_url=image_url or image_base64
     )
 
 
