@@ -275,6 +275,105 @@ if (document.getElementById("logsNavBtn")) {
     };
 }
 
-document.getElementById('include_image').addEventListener('change', function() {
-document.getElementById('imagePromptDiv').style.display = this.checked ? 'block' : 'none';
-});
+const includeImageCheckbox = document.getElementById('include_image');
+if (includeImageCheckbox) {
+    includeImageCheckbox.addEventListener('change', function() {
+        document.getElementById('imagePromptDiv').style.display = this.checked ? 'block' : 'none';
+    });
+}
+
+
+// Generar artículo científico
+
+if (document.getElementById("scienceNavBtn")) {
+    document.getElementById("scienceNavBtn").onclick = function() {
+        window.location.href = "/science";
+    };
+}
+
+if (document.getElementById("scienceForm")) {
+    document.getElementById("scienceForm").onsubmit = async function(e) {
+        e.preventDefault();
+        document.getElementById("scienceResult").innerHTML = "Generando...";
+        const formData = new FormData(this);
+        const payload = {
+            topic: formData.get("topic"),
+            audience: formData.get("audience"),
+            language: formData.get("language"),
+            model: formData.get("model"),
+            max_docs: Number(formData.get("max_docs")) || 3
+        };
+        try {
+            const res = await fetch("/api/science/generate", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": "Bearer " + getToken()
+                },
+                body: JSON.stringify(payload)
+            });
+            const data = await res.json();
+            if (res.ok) {
+                let html = `<div class="science-result"><h3>Artículo generado:</h3><div class="blog-content"><p>${data.text_content.replace(/\n/g, "<br>")}</p></div>`;
+                html += `<div class="science-sources"><h4>Fuentes utilizadas:</h4><ul>`;
+                data.sources.forEach(src => {
+                    html += `<li>
+                        <strong>${src.title}</strong> (${src.authors || "Sin autores"})<br>
+                        <a href="${src.url}" target="_blank">Ver paper</a>
+                        <br>Relevancia: ${src.relevance_score ? src.relevance_score.toFixed(2) : "-"}
+                    </li>`;
+                });
+                html += `</ul></div></div>`;
+                document.getElementById("scienceResult").innerHTML = html;
+                document.getElementById("scienceActions").style.display = "flex";
+            } else {
+                document.getElementById("scienceResult").innerHTML = `<span class="error">${data.detail || "Error generando artículo"}</span>`;
+                document.getElementById("scienceActions").style.display = "none";
+            }
+        } catch (err) {
+            document.getElementById("scienceResult").innerHTML = `<span class="error">Error de red</span>`;
+        }
+    };
+}
+// Copiar contenido científico
+if (document.getElementById("copyScienceBtn")) {
+    document.getElementById("copyScienceBtn").onclick = function() {
+        const resultDiv = document.getElementById("scienceResult");
+        const tempElement = document.createElement("div");
+        tempElement.innerHTML = resultDiv.innerHTML;
+        const text = tempElement.innerText;
+        navigator.clipboard.writeText(text)
+            .then(() => alert("¡Contenido copiado al portapapeles!"))
+            .catch(() => alert("No se pudo copiar el contenido."));
+    };
+}
+
+// Exportar como .md
+if (document.getElementById("exportScienceMdBtn")) {
+    document.getElementById("exportScienceMdBtn").onclick = function() {
+        const resultDiv = document.getElementById("scienceResult");
+        const tempElement = document.createElement("div");
+        tempElement.innerHTML = resultDiv.innerHTML;
+        const text = tempElement.innerText;
+        const blob = new Blob([text], { type: "text/markdown" });
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = "articulo_cientifico.md";
+        link.click();
+    };
+}
+
+// Exportar como .txt
+if (document.getElementById("exportScienceTxtBtn")) {
+    document.getElementById("exportScienceTxtBtn").onclick = function() {
+        const resultDiv = document.getElementById("scienceResult");
+        const tempElement = document.createElement("div");
+        tempElement.innerHTML = resultDiv.innerHTML;
+        const text = tempElement.innerText;
+        const blob = new Blob([text], { type: "text/plain" });
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = "articulo_cientifico.txt";
+        link.click();
+    };
+}

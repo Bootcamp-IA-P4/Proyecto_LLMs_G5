@@ -15,10 +15,18 @@ body {
 }
 
 /* ----------- Contenedores ----------- */
-.container,
+.container {
+    max-width: 900px;
+    margin: 40px auto;
+    background: #fff;
+    color: #2F3C4E;
+    padding: 2.5em 2em;
+    border-radius: 18px;
+    box-shadow: 0 4px 24px rgba(47, 60, 78, 0.13);
+}
 .auth-container {
     width: 100%;
-    max-width: 400px;
+    max-width: 600px;
     margin: 40px auto;
     background: var(--secondary);
     color: #2F3C4E;
@@ -26,12 +34,6 @@ body {
     border-radius: 12px;
     box-shadow: 0 2px 8px rgba(47, 60, 78, 0.15);
     box-sizing: border-box;
-}
-
-@media (min-width: 700px) {
-    .container {
-        max-width: 600px;
-    }
 }
 
 /* ----------- Formularios ----------- */
@@ -89,6 +91,8 @@ button:hover,
     gap: 0.5em;
     margin-bottom: 1em;
     flex-wrap: wrap;
+    justify-content: center;
+    margin: 0 auto 1em auto;
 }
 
 .actions button {
@@ -616,4 +620,44 @@ a:hover {
 .checkbox-label:hover {
     background: #ffe5db;
     border-color: #ff6333;
+}
+
+/* ----------- Página científica ----------- */
+.science-container {
+    max-width: 900px;
+    margin: 40px auto;
+    background: #fff;
+    color: #2F3C4E;
+    padding: 2.5em 2em;
+    border-radius: 18px;
+    box-shadow: 0 4px 24px rgba(47, 60, 78, 0.13);
+}
+
+.science-form input,
+.science-form select,
+.science-form button {
+    font-size: 1.15em;
+    margin-bottom: 1.2em;
+    padding: 1.2em 1em;
+    border-radius: 12px;
+    width: 100%;
+}
+
+.science-result {
+    margin-top: 2em;
+    background: #f7fafd;
+    border-radius: 10px;
+    padding: 1.5em;
+    box-shadow: 0 2px 8px rgba(47, 60, 78, 0.08);
+}
+
+.science-sources {
+    margin-top: 1.5em;
+}
+
+@media (max-width: 900px) {
+    .science-container {
+        max-width: 99vw;
+        padding: 1em 0.3em;
+    }
 }
