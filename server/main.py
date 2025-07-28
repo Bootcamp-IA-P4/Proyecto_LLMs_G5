@@ -58,3 +58,7 @@ async def register_page(request: Request):
 @app.get("/langsmith")
 async def langsmit_page(request: Request):
     return templates.TemplateResponse("langsmith.html", {"request": request})
+
+@app.get("/science")
+async def science_page(request: Request):
+    return templates.TemplateResponse("science.html", {"request": request})
