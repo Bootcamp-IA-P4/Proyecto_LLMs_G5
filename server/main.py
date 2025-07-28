@@ -2,6 +2,7 @@ from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from server.routes.auth import router as auth_router
 from server.routes.content import router as content_router
+from server.routes.science import router as science_router
 from server.config.settings import settings
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
@@ -33,6 +34,9 @@ templates = Jinja2Templates(directory=os.path.join(frontend_path, "templates"))
 # Routers
 app.include_router(auth_router, prefix="/api/auth", tags=["auth"])
 app.include_router(content_router, prefix="/api/content", tags=["content"])
+app.include_router(
+    science_router, prefix="/api/science", tags=["science"]
+)
 
 @app.get("/")
 async def root(request: Request):
