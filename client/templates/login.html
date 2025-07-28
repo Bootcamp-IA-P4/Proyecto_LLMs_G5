@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Login - AI Social Content Generator</title>
+    <link rel="stylesheet" href="{{ url_for('static', path='css/styles.css') }}">
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:700,400&display=swap" rel="stylesheet">
+</head>
+
+<body class="auth-bg">
+    <img src="{{ url_for('static', path='img/logo-cgai.png') }}" alt="Logo" class="corner-logo">
+    <div class="hero-title">
+        <h1>
+            <span class="hero-gradient">ContentGenius AI</span><br>
+            <span class="hero-sub">Automatiza tu creatividad, impulsa tu presencia digital.</span>
+        </h1>
+    </div>
+    <div class="container auth-container">
+        <h2 class="h2_title">Iniciar sesión</h2>
+        <p class="intro-text">
+            Inicia sesión para acceder a la generación de contenido inteligente y ahorrar tiempo en tus publicaciones.
+        </p>
+        <form id="loginForm">
+            <input type="email" name="email" placeholder="Correo electrónico" required>
+            <input type="password" name="password" placeholder="Contraseña" required>
+            <button type="submit">Entrar</button>
+        </form>
+        <p>¿No tienes cuenta? <a href="/register">Regístrate</a></p>
+        <div id="loginError" class="error"></div>
+    </div>
+    <img src="{{ url_for('static', path='img/fondo.png') }}" alt="Decoración" class="corner-bg">
+    <script src="{{ url_for('static', path='js/main.js') }}"></script>
+</body>
+
+</html>
