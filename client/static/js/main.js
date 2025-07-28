@@ -1,9 +1,14 @@
 function getToken() {
     return localStorage.getItem("access_token");
 }
-if (window.location.pathname === "/" && !getToken()) {
+// Comprobamos expiración al cargar la página principal
+if (window.location.pathname === "/" && (!getToken() || Date.now() > Number(localStorage.getItem("token_expiry")))) {
+    localStorage.removeItem("access_token");
+    localStorage.removeItem("token_expiry");
     window.location.href = "/login";
 }
+
+
 // Login
 if (document.getElementById("loginForm")) {
     document.getElementById("loginForm").onsubmit = async function(e) {
@@ -20,6 +25,7 @@ if (document.getElementById("loginForm")) {
             const data = await res.json();
             if (res.ok) {
                 localStorage.setItem("access_token", data.access_token);
+                localStorage.setItem("token_expiry", Date.now() + 30 * 60 * 1000); 
                 window.location.href = "/";
             } else {
                 document.getElementById("loginError").innerText = data.detail || "Error de login";
@@ -46,6 +52,7 @@ if (document.getElementById("registerForm")) {
             const data = await res.json();
             if (res.ok) {
                 localStorage.setItem("access_token", data.access_token);
+                localStorage.setItem("token_expiry", Date.now() + 30 * 60 * 1000); 
                 window.location.href = "/";
             } else {
                 document.getElementById("registerError").innerText = data.detail || "Error de registro";
