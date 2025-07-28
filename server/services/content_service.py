@@ -32,6 +32,7 @@ async def generate_content(request: ContentRequest, user_id: UUID):
             company_info="",                  # Puede ser nulo o vacío
             language=request.language         # Pasamos el idioma de salida
         )
+        print(f"✅ Generated image: {image_url}...")
     except Exception as e:
         print(f"❌ Error generating image: {e}")
         image_url = None
@@ -60,11 +61,7 @@ async def generate_content(request: ContentRequest, user_id: UUID):
         # No relanzar la excepción si es solo el guardado, devolver el contenido generado
         print("⚠️ Content generated but not saved to database")
 
-    return ContentResponse(
-        text_content=generated_text,
-        image_url=image_url
-    )
-
+    return generated_text, image_url
 
 async def get_user_posts(user_id: UUID):
     """Obtiene el historial de posts del usuario"""

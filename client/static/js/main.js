@@ -64,7 +64,10 @@ if (document.getElementById("registerForm")) {
 if (document.getElementById("contentForm")) {
     document.getElementById("contentForm").onsubmit = async function(e) {
         e.preventDefault();
-        document.getElementById("result").innerHTML = "";
+        document.getElementById("text-result").innerHTML = "";
+        const imageElement = document.getElementById("imagen");
+        imageElement.src = "";
+        imageElement.style.display = "none";
         try {
             const formData = new FormData(this);
             const payload = {
@@ -87,10 +90,12 @@ if (document.getElementById("contentForm")) {
             });
             const data = await res.json();
             if (res.ok) {
-                document.getElementById("result").innerHTML = `<h3>Resultado:</h3><p>${data.text_content}</p>`;
-                document.getElementById("imagen").src = data.image_url;
+                document.getElementById("text-result").innerHTML = `<h3>Resultado:</h3><p>${data.text_content}</p>`;
+                const imageElement = document.getElementById("imagen");
+                imageElement.src = data.image_url;
+                imageElement.style.display = "block";
             } else {
-                document.getElementById("result").innerHTML = `<span class="error">${data.detail || "Error generando contenido"}</span>`;
+                document.getElementById("text-result").innerHTML = `<span class="error">${data.detail || "Error generando contenido"}</span>`;
             }
         } catch (err) {
             document.getElementById("result").innerHTML = `<span class="error">Error de red</span>`;

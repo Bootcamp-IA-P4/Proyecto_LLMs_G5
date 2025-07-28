@@ -5,9 +5,13 @@ services:
       dockerfile: server/Dockerfile
     ports:
       - "8000:8000"
+    volumes:
+      - ./server:/app/server
+      - ./client:/app/client
+    command: uvicorn server.main:app --host 0.0.0.0 --port 8000 --reload
     environment:
       - GROQ_API_KEY=${GROQ_API_KEY}
-      - FAL_API_KEY=${FAL_API_KEY}
+      #- FAL_KEY=${FAL_KEY}
     env_file: .env
     # depends_on:
     #   - libretranslate

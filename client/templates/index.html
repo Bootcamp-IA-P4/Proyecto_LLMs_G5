@@ -40,7 +40,10 @@
             <input type="text" name="company_info" placeholder="Información de empresa/persona (opcional)">
             <button type="submit">Generar</button>
         </form>
-        <div id="result"></div>
+        <div id="text-result"></div>
+        <div class="image-container">
+            <img id="imagen" src="" alt="Generated Image" style="display:none; max-width: 100%; height: auto;"/>
+        </div>
         <button id="logoutBtn">Cerrar sesión</button>
     </div>
     <script src="{{ url_for('static', path='js/main.js') }}"></script>
