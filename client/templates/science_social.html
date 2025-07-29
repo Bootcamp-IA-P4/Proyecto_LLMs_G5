@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Generador Científico IA</title>
+    <title>Genera contenido científico para tus RRSS</title>
     <link rel="stylesheet" href="{{ url_for('static', path='css/styles.css') }}">
 </head>
 
@@ -15,7 +15,7 @@
         </span>
         <div class="navbar-actions">
             <button onclick="window.location.href='/'" type="button">Inicio</button>
-            <div class="dropdown" >
+            <div class="dropdown">
                 <button class="dropbtn" type="button">Contenido científico</button>
                 <div class="dropdown-content">
                     <a href="/science">Artículos y resúmenes</a>
@@ -27,32 +27,31 @@
         </div>
     </nav>
     <div class="science-container">
-        <h2 class="h2_title">Genera artículos científicos y resúmenes</h2>
-        <form id="scienceForm" class="science-form">
-            <input type="text" name="topic" placeholder="Tema científico (ej: CRISPR en biomedicina)" required>
-            <select name="audience" required>
-                <option value="general">General</option>
-                <option value="juvenil">Juvenil</option>
-                <option value="técnica">Técnica</option>
+        <h2 class="h2_title">Crea publicaciones científicas para redes sociales</h2>
+        <form id="scienceSocialForm" class="science-form">
+            <input type="text" name="topic" placeholder="Tema científico" required>
+            <select name="social_network" required>
+                <option value="">Selecciona red social</option>
+                <option value="twitter">Twitter/X</option>
+                <option value="instagram">Instagram</option>
+                <option value="linkedin">LinkedIn</option>
+                <option value="tiktok">TikTok</option>
+                <option value="blog">Blog</option>
             </select>
+            <input type="text" name="company_info" placeholder="Información de empresa/persona (opcional)">
+            <input type="text" name="voice" placeholder="Tono de voz (ej: profesional, casual)">
             <select name="language" required>
                 <option value="es">Español</option>
                 <option value="en">Inglés</option>
                 <option value="fr">Francés</option>
             </select>
-            <select name="model">
-                <option value="llama3-8b-8192">Llama 3</option>
-                <option value="gemma2-9b-it">Gemma</option>
-            </select>
-            <input type="number" name="max_docs" min="1" max="10" 
-                placeholder="¿Cuántos artículos científicos buscar? (1-10)">
-            <button type="submit" class="button_gen">Generar artículo científico</button>
+            <button type="submit" class="button_gen">Generar contenido</button>
         </form>
-        <div id="scienceResult"></div>
-        <div class="actions" id="scienceActions" style="display:none;">
-            <button id="copyScienceBtn" type="button">Copiar contenido</button>
-            <button id="exportScienceMdBtn" type="button">Exportar .md</button>
-            <button id="exportScienceTxtBtn" type="button">Exportar .txt</button>
+        <div id="scienceSocialResult"></div>
+        <div class="actions" id="scienceSocialActions" style="display:none;">
+            <button id="copyScienceSocialBtn" type="button">Copiar contenido</button>
+            <button id="exportScienceSocialMdBtn" type="button">Exportar .md</button>
+            <button id="exportScienceSocialTxtBtn" type="button">Exportar .txt</button>
         </div>
     </div>
     <script src="{{ url_for('static', path='js/main.js') }}"></script>
