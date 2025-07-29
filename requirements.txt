@@ -100,3 +100,4 @@ chromadb
 langchain-chroma
 deep_translator
 cloudinary
+pymupdf
