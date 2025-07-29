@@ -14,8 +14,7 @@ Plataforma web para la generación automática de contenido para redes sociales 
 
 ### Sistema de divulgación científica con RAG
 
-**Fuentes académicas**: Búsqueda automática en ArXiv
-
+- **Fuentes académicas**: Búsqueda automática en ArXiv
 - **Procesamiento inteligente**: Embeddings con HuggingFace y búsqueda semántica con ChromaDB Cloud
 - **Doble flujo RAG**: Sistema científico tradicional y RAG social para contenido adaptado a redes
 - **Contenido riguroso**: Generación basada en documentos científicos reales
@@ -109,7 +108,7 @@ Copiar `.env.example` a `.env` y completar:
 ```env
 # Supabase Configuration
 SUPABASE_URL=your_supabase_url_here
-SUPABASE_ANON_KEY=your_supabase_anon_key_here
+SUPABASE_KEY=your_supabase_anon_key_here
 
 # JWT Configuration
 SECRET_KEY=your_super_secret_jwt_key_change_this
