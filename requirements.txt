@@ -5,6 +5,7 @@ annotated-types
 anyio
 arxiv
 attrs
+httpx
 bcrypt
 certifi
 cffi
@@ -97,3 +98,5 @@ sentence-transformers
 faiss-cpu
 chromadb
 langchain-chroma
+deep_translator
+cloudinary
