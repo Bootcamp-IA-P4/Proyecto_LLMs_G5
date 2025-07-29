@@ -27,4 +27,9 @@ class Settings:
     CHROMA_TENANT = os.getenv("CHROMA_TENANT")
     CHROMA_DATABASE = os.getenv("CHROMA_DATABASE")
 
+    # Langsmith
+    LANGSMITH_API_KEY = os.getenv("LANGSMITH_API_KEY")
+    LANGSMITH_PROJECT_ID = os.getenv("LANGSMITH_PROJECT_ID")
+    
+
 settings = Settings()

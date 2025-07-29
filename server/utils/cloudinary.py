@@ -14,6 +14,7 @@ def upload_image_bytes(image_bytes, public_id=None):
         image_bytes,
         resource_type="image",
         public_id=public_id,
-        overwrite=True
+        overwrite=True,
+        folder="Proyecto_LLMs_G5"
     )
     return result.get("secure_url")

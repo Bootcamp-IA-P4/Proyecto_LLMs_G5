@@ -8,7 +8,6 @@ if (window.location.pathname === "/" && (!getToken() || Date.now() > Number(loca
     window.location.href = "/login";
 }
 
-
 // Login
 if (document.getElementById("loginForm")) {
     document.getElementById("loginForm").onsubmit = async function(e) {
@@ -116,7 +115,21 @@ if (document.getElementById("contentForm")) {
                 // Mostrar la imagen 
                 const imageDiv = document.getElementById('image-result');
                 if (data.image_url) {
-                    imageDiv.innerHTML = `<img src="${data.image_url}" alt="Imagen generada" class="generated-image">`;
+                    imageDiv.innerHTML = `<img src="${data.image_url}" alt="Imagen generada" class="generated-image">
+                    <div class="image-url">
+                        <button id="copyImageUrlBtn" type="button" class="small-btn">Copiar</button>
+                        <a href="${data.image_url}" target="_blank">${data.image_url}</a>
+                    </div>
+                    <div style="height: 1.2em;"></div>`
+                    ;
+                    const copyBtn = document.getElementById("copyImageUrlBtn");
+                    if (copyBtn) {
+                        copyBtn.onclick = function() {
+                            navigator.clipboard.writeText(data.image_url)
+                                .then(() => alert("¡URL copiada al portapapeles!"))
+                                .catch(() => alert("No se pudo copiar la URL."));
+                        };
+                    }
                 } else {
                     imageDiv.innerHTML = ""; 
                 }
@@ -196,6 +209,7 @@ if (document.getElementById("resetBtn")) {
     document.getElementById("resetBtn").onclick = function() {
         document.getElementById("contentForm").reset();
         document.getElementById("result").innerHTML = "";
+        document.getElementById("image-result").innerHTML = ""; 
         document.getElementById("actionsBtns").style.display = "none";
         this.style.display = "none";
     };

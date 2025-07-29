@@ -214,16 +214,6 @@ button:hover,
     color: #FF7F50;
 }
 
-/* .dropdown:hover .dropdown-content,
-.dropdown:focus-within .dropdown-content {
-    display: block;
-}
-
-.dropdown:hover .dropbtn {
-    background: #FF7F50;
-    color: #fff;
-} */
-
 .dropdown-content.show {
     display: block;
 }
@@ -445,7 +435,13 @@ a:hover {
     transition: background 0.2s;
     display: inline-block;
 }
-
+.image-url {
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
+    margin-top: 0.5em;
+    word-break: break-all;
+}
 .small-btn:hover {
     background: #ff6333;
 }
