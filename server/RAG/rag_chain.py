@@ -9,7 +9,7 @@ from langchain.chains import create_retrieval_chain
 from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain_core.runnables import RunnablePassthrough
 from langchain_core.output_parsers import StrOutputParser
-from server.prompts.prompts import PROMPTS
+from server.prompts.prompts_rag import PROMPTS
 from server.RAG.vector_db import VectorStore
 
 # Configura logging
