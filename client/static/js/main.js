@@ -64,10 +64,13 @@ if (document.getElementById("registerForm")) {
 if (document.getElementById("contentForm")) {
     document.getElementById("contentForm").onsubmit = async function(e) {
         e.preventDefault();
-        document.getElementById("text-result").innerHTML = "";
-        const imageElement = document.getElementById("imagen");
-        imageElement.src = "";
-        imageElement.style.display = "none";
+        document.getElementById("result").innerHTML = "";
+        const imageDiv = document.getElementById('image-result');
+        imageDiv.innerHTML = "";
+        document.getElementById("loader").style.display = "block";
+        document.getElementById("actionsBtns").style.display = "none";
+        showResetBtn(false);
+
         try {
             const formData = new FormData(this);
             const payload = {
@@ -81,9 +84,12 @@ if (document.getElementById("contentForm")) {
                 payload.company_info = formData.get("company_info");
             }
             payload.include_image = document.getElementById("include_image").checked;
-            const imagePromptValue = document.getElementById("image_prompt").value;
-            if (imagePromptValue) {
-                payload.image_prompt = imagePromptValue;
+            if (payload.include_image) {
+                payload.image_generator = formData.get("image_generator");
+                const imagePromptValue = document.getElementById("image_prompt").value;
+                if (imagePromptValue) {
+                    payload.image_prompt = imagePromptValue;
+                }
             }
             const res = await fetch("/api/content/generate", {
                 method: "POST",
@@ -112,32 +118,18 @@ if (document.getElementById("contentForm")) {
                 }
                 document.getElementById("result").innerHTML = `<h3>Resultado:</h3>${content}`;
                 // Mostrar la imagen 
-                const imageDiv = document.getElementById('image-result');
                 if (data.image_url) {
                     imageDiv.innerHTML = `<img src="${data.image_url}" alt="Imagen generada" class="generated-image">`;
-                } else {
-                    imageDiv.innerHTML = ""; 
                 }
                 document.getElementById("actionsBtns").style.display = "flex";
                 showResetBtn(true);
             } else {
                 document.getElementById("result").innerHTML = `<span class="error">${data.detail || "Error generando contenido"}</span>`;
-                document.getElementById("actionsBtns").style.display = "none";
-                showResetBtn(false);
-                // Mi código de rama feature/merge-docker... 
-                // que funciona:
-                // document.getElementById("text-result").innerHTML = `<h3>Resultado:</h3><p>${data.text_content}</p>`;
-                // const imageElement = document.getElementById("imagen");
-                // imageElement.src = data.image_url;
-                // imageElement.style.display = "block";
-            // } else {
-            //     document.getElementById("text-result").innerHTML = `<span class="error">${data.detail || "Error generando contenido"}</span>`;
             }
         } catch (err) {
+            document.getElementById("result").innerHTML = `<span class="error">Error de red: ${err.message}</span>`;
+        } finally {
             document.getElementById("loader").style.display = "none";
-            document.getElementById("result").innerHTML = `<span class="error">Error de red</span>`;
-            document.getElementById("actionsBtns").style.display = "none";
-            showResetBtn(false);
         }
     };
 }
@@ -202,6 +194,7 @@ if (document.getElementById("resetBtn")) {
     document.getElementById("resetBtn").onclick = function() {
         document.getElementById("contentForm").reset();
         document.getElementById("result").innerHTML = "";
+        document.getElementById("image-result").innerHTML = "";
         document.getElementById("actionsBtns").style.display = "none";
         this.style.display = "none";
     };
@@ -390,3 +383,4 @@ if (document.getElementById("exportScienceTxtBtn")) {
         link.click();
     };
 }
+});

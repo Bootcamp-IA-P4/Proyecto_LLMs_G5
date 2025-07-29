@@ -16,13 +16,15 @@ async def generate_post(
 ):
     """Generar contenido de texto e imagen"""
     try:
-        text, image_path = await generate_content(request_data, current_user)
+        response_data = await generate_content(request_data, current_user)
         
-        # Construir la URL completa de la imagen
-        image_url = f"{request.base_url}{image_path.lstrip('/')}"
+        # Construir la URL completa de la imagen si existe
+        image_url = None
+        if response_data.image_url:
+            image_url = f"{request.base_url}{response_data.image_url.lstrip('/')}"
         
         return ContentResponse(
-            text_content=text,
+            text_content=response_data.text_content,
             image_url=image_url
         )
     except Exception as e:
