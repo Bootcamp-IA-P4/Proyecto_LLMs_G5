@@ -1,4 +1,4 @@
-# AI Social Content Generator
+# ContentGenius AI
 
 Plataforma web para la generación automática de contenido para redes sociales y divulgación científica utilizando modelos de lenguaje grande (LLMs) y técnicas de Retrieval-Augmented Generation (RAG).
 
@@ -10,13 +10,17 @@ Plataforma web para la generación automática de contenido para redes sociales 
 - **Personalización avanzada**: Audiencias (juvenil, general, técnica) e idiomas (español, inglés, francés)
 - **Modelos LLM**: Integración con Groq (llama3-8b-8192, gemma2-9b-it)
 - **Generación de imágenes**: Integración con Stability AI para contenido visual
+- **RAG para redes sociales**: Contenido enriquecido con fuentes científicas para mayor precisión
 
 ### Sistema de divulgación científica con RAG
 
-- **Fuentes académicas**: Búsqueda automática en ArXiv
-- **Procesamiento inteligente**: Embeddings con HuggingFace y búsqueda semántica con FAISS
+**Fuentes académicas**: Búsqueda automática en ArXiv
+
+- **Procesamiento inteligente**: Embeddings con HuggingFace y búsqueda semántica con ChromaDB Cloud
+- **Doble flujo RAG**: Sistema científico tradicional y RAG social para contenido adaptado a redes
 - **Contenido riguroso**: Generación basada en documentos científicos reales
 - **Metadatos detallados**: Información completa de fuentes y relevancia
+- **Almacenamiento persistente**: ChromaDB Cloud para gestión escalable de vectores
 
 ### Backend robusto
 
@@ -35,8 +39,9 @@ Plataforma web para la generación automática de contenido para redes sociales 
 - **Groq**: Inferencia de modelos de lenguaje
 - **Supabase**: Base de datos PostgreSQL como servicio
 - **Cloudinary**: Almacenamiento y optimización de imágenes
-- **FAISS**: Vector database para búsqueda semántica
+- **ChromaDB Cloud**: Vector database persistente para búsqueda semántica
 - **HuggingFace**: Modelos de embeddings
+- **Docker**: Containerización para despliegue simplificado
 
 ### Frontend
 
@@ -48,6 +53,7 @@ Plataforma web para la generación automática de contenido para redes sociales 
 
 - **ArXiv API**: Acceso a documentos científicos
 - **Stability AI**: Generación de imágenes
+- **ChromaDB Cloud**: Almacenamiento persistente de vectores
 - **LangSmith**: Monitoreo y logging
 
 ## 📁 Estructura del proyecto
@@ -62,12 +68,14 @@ PROYECTO_LLMS_05/
 │   └── templates/               # Plantillas HTML
 │
 ├── server/                      # Backend
+│   ├── chroma_db/               # Configuración de conexión a bbdd vectorial
 │   ├── config/settings.py       # Configuración
 │   ├── generators/              # Generadores de contenido
 │   │   ├── image.py
 │   │   └── text.py
 │   ├── models/                  # Modelos Pydantic
 │   ├── prompts/                 # Plantillas de prompts
+│   ├── RAG/                     # Lógica de RAG para redes sociales
 │   ├── routes/                  # Endpoints API
 │   ├── services/                # Lógica de negocio
 │   ├── utils/                   # Utilidades
@@ -82,53 +90,89 @@ PROYECTO_LLMS_05/
 
 ### Prerrequisitos
 
-- Python 3.8+
-- pip
-- Cuentas en Supabase, Groq, Stability AI y Cloudinary
+- Docker y Docker Compose (recomendado) o Python 3.8+
+- Cuentas en Supabase, Groq, Stability AI, Cloudinary y ChromaDB Cloud
 
-### 1. Clonar el repositorio
+### Opción 1: Despliegue con Docker (Recomendado)
+
+#### 1. Clonar el repositorio
 
 ```bash
 git clone <repository-url>
 cd PROYECTO_LLMS_05
 ```
 
-### 2. Instalar dependencias
+#### 2. Configurar variables de entorno
+
+Copiar `.env.example` a `.env` y completar:
+
+```env
+# Supabase Configuration
+SUPABASE_URL=your_supabase_url_here
+SUPABASE_ANON_KEY=your_supabase_anon_key_here
+
+# JWT Configuration
+SECRET_KEY=your_super_secret_jwt_key_change_this
+ALGORITHM=HS256
+ACCESS_TOKEN_EXPIRE_MINUTES=30
+
+# Groq API
+GROQ_API_KEY=your_groq_api_key_here
+
+#LANGSMITH
+LANGSMITH_TRACING=true
+LANGSMITH_ENDPOINT=https://api.smith.langchain.com
+LANGSMITH_API_KEY=your_langsmith_api_key_here
+LANGSMITH_PROJECT="your_langsmith_project_name_here"
+
+#Image
+STABILITY_API_KEY=your_stability_api_key_here
+
+# Coudinary
+CLOUDINARY_CLOUD_NAME=your_cloudinary_cloud_name_here
+CLOUDINARY_API_KEY=your_cloudinary_api_key_here
+CLOUDINARY_API_SECRET=your_cloudinary_api_secret_here
+
+# Chroma
+CHROMA_API_KEY='your_chroma_api_key_here'
+CHROMA_TENANT='your_chroma_tenant_here'
+CHROMA_DATABASE='your_chroma_database_here'
+```
+
+#### 3. Construir y ejecutar
+
+```bash
+docker-compose up --build
+```
+
+La aplicación estará disponible en `http://localhost:8000`
+
+### Opción 2: Instalación tradicional
+
+#### 1. Clonar el repositorio
+
+```bash
+git clone <repository-url>
+cd PROYECTO_LLMS_05
+```
+
+#### 2. Instalar dependencias
 
 ```bash
 pip install -r requirements.txt
 ```
 
-### 3. Configurar variables de entorno
+#### 3. Configurar variables de entorno
 
-Copiar `.env.example` a `.env` y completar:
+(Usar la misma configuración que en la Opción 1)
 
-```env
-# Base de datos
-SUPABASE_URL=tu_url_de_supabase
-SUPABASE_KEY=tu_key_de_supabase
+#### 4. Ejecutar la aplicación
 
-# Modelos LLM
-GROQ_API_KEY=tu_api_key_de_groq
-
-# Generación de imágenes
-STABILITY_API_KEY=tu_api_key_de_stability
-
-# Almacenamiento
-CLOUDINARY_CLOUD_NAME=tu_cloud_name
-CLOUDINARY_API_KEY=tu_api_key
-CLOUDINARY_API_SECRET=tu_api_secret
-
-# Autenticación JWT
-SECRET_KEY=tu_secret_key_jwt
-ALGORITHM=HS256
-ACCESS_TOKEN_EXPIRE_MINUTES=30
-
-# Monitoreo (opcional)
-LANGSMITH_API_KEY=tu_api_key_langsmith
+```bash
+uvicorn server.main:app --reload
 ```
 
-### 4. Configurar base de datos en Supabase
+### Configurar base de datos en Supabase
 
 Crear las siguientes tablas:
 
@@ -168,14 +212,6 @@ CREATE TABLE science_posts (
     created_at TIMESTAMP DEFAULT NOW()
 );
 ```
-
-### 5. Ejecutar la aplicación
-
-```bash
-uvicorn server.main:app --reload
-```
-
-La aplicación estará disponible en `http://localhost:8000`
 
 ## 📖 Uso de la API
 
@@ -222,6 +258,16 @@ Authorization: Bearer <token>
     "language": "es",
     "model": "llama3-8b-8192",
     "max_docs": 5
+}
+
+# Explicaciones científicas para RRSS
+POST /api/explain
+Authorization: Bearer <token>
+{
+    "topic": "quantum computing",
+    "platform": "linkedin",
+    "audience": "técnica",
+    "language": "es"
 }
 ```
 
