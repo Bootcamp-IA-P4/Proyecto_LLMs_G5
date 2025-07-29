@@ -214,7 +214,7 @@ button:hover,
     color: #FF7F50;
 }
 
-.dropdown:hover .dropdown-content,
+/* .dropdown:hover .dropdown-content,
 .dropdown:focus-within .dropdown-content {
     display: block;
 }
@@ -222,9 +222,11 @@ button:hover,
 .dropdown:hover .dropbtn {
     background: #FF7F50;
     color: #fff;
+} */
+
+.dropdown-content.show {
+    display: block;
 }
-
-
 /* ----------- Mensajes y textos ----------- */
 .h2_title {
     text-align: center;

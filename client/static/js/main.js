@@ -475,3 +475,20 @@ if (document.getElementById("exportScienceSocialTxtBtn")) {
         link.click();
     };
 }
+
+document.querySelectorAll('.dropdown .dropbtn').forEach(btn => {
+    btn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        const dropdownContent = this.nextElementSibling;
+        dropdownContent.classList.toggle('show');
+        // Cierra otros menús abiertos
+        document.querySelectorAll('.dropdown-content').forEach(dc => {
+            if (dc !== dropdownContent) dc.classList.remove('show');
+        });
+    });
+});
+
+// Cierra el menú si haces click fuera
+document.addEventListener('click', function() {
+    document.querySelectorAll('.dropdown-content').forEach(dc => dc.classList.remove('show'));
+});
