@@ -1,4 +1,4 @@
-FROM python:3.12-slim
+FROM python:3.10-slim
 
 WORKDIR /app
 
@@ -12,5 +12,4 @@ RUN apt-get update && apt-get install -y --no-install-recommends iputils-ping cu
 
 EXPOSE 8000
 
-RUN ls -lR /app/client
 CMD ["uvicorn", "server.main:app", "--host", "0.0.0.0", "--port", "8000"]

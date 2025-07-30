@@ -15,6 +15,9 @@ from server.config.settings import settings
 from server.models.science import ScienceRequest, SourceInfo
 from server.utils.database import get_supabase
 
+from langchain_chroma import Chroma
+from server.chroma_db.connection_db import client
+
 # Modelos disponibles
 AVAILABLE_MODELS = {
     "llama3-8b-8192": "llama3-8b-8192",
@@ -96,11 +99,25 @@ async def generate_science_content(request: ScienceRequest, user_id: UUID) -> di
 
     # 3. Embeddings + FAISS
     embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
-    store = FAISS.from_documents(chunks, embeddings)
+
+    # Si se usa FAISS, descomentar la siguiente línea:
+    # store = FAISS.from_documents(chunks, embeddings)
+
+    collection_name = "science_arxiv"
+
+    vector_store = Chroma(
+        client=client,
+        collection_name=collection_name,
+        embedding_function=embeddings,
+    )
+    
+    # Añadir documentos a la colección
+    print(len(chunks))
+    vector_store.add_documents(chunks)
 
     # 4. Recuperar los más relevantes (máximo 5)
     k_relevant = min(5, len(chunks))
-    relevant = store.similarity_search_with_score(request.topic, k=k_relevant)
+    relevant = vector_store.similarity_search_with_score(request.topic, k=k_relevant)
     
     # Extraer información de fuentes
     sources_info = []

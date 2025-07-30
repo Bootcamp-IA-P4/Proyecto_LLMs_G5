@@ -5,9 +5,13 @@ document.addEventListener("DOMContentLoaded", function() {
 function getToken() {
     return localStorage.getItem("access_token");
 }
-if (window.location.pathname === "/" && !getToken()) {
+// Comprobamos expiración al cargar la página principal
+if (window.location.pathname === "/" && (!getToken() || Date.now() > Number(localStorage.getItem("token_expiry")))) {
+    localStorage.removeItem("access_token");
+    localStorage.removeItem("token_expiry");
     window.location.href = "/login";
 }
+
 // Login
 if (document.getElementById("loginForm")) {
     document.getElementById("loginForm").onsubmit = async function(e) {
@@ -24,6 +28,7 @@ if (document.getElementById("loginForm")) {
             const data = await res.json();
             if (res.ok) {
                 localStorage.setItem("access_token", data.access_token);
+                localStorage.setItem("token_expiry", Date.now() + 30 * 60 * 1000); 
                 window.location.href = "/";
             } else {
                 document.getElementById("loginError").innerText = data.detail || "Error de login";
@@ -50,6 +55,7 @@ if (document.getElementById("registerForm")) {
             const data = await res.json();
             if (res.ok) {
                 localStorage.setItem("access_token", data.access_token);
+                localStorage.setItem("token_expiry", Date.now() + 30 * 60 * 1000); 
                 window.location.href = "/";
             } else {
                 document.getElementById("registerError").innerText = data.detail || "Error de registro";
@@ -119,7 +125,23 @@ if (document.getElementById("contentForm")) {
                 document.getElementById("result").innerHTML = `<h3>Resultado:</h3>${content}`;
                 // Mostrar la imagen 
                 if (data.image_url) {
-                    imageDiv.innerHTML = `<img src="${data.image_url}" alt="Imagen generada" class="generated-image">`;
+                    imageDiv.innerHTML = `<img src="${data.image_url}" alt="Imagen generada" class="generated-image">
+                    <div class="image-url">
+                        <button id="copyImageUrlBtn" type="button" class="small-btn">Copiar</button>
+                        <a href="${data.image_url}" target="_blank">${data.image_url}</a>
+                    </div>
+                    <div style="height: 1.2em;"></div>`
+                    ;
+                    const copyBtn = document.getElementById("copyImageUrlBtn");
+                    if (copyBtn) {
+                        copyBtn.onclick = function() {
+                            navigator.clipboard.writeText(data.image_url)
+                                .then(() => alert("¡URL copiada al portapapeles!"))
+                                .catch(() => alert("No se pudo copiar la URL."));
+                        };
+                    }
+                } else {
+                    imageDiv.innerHTML = ""; 
                 }
                 document.getElementById("actionsBtns").style.display = "flex";
                 showResetBtn(true);
@@ -194,7 +216,7 @@ if (document.getElementById("resetBtn")) {
     document.getElementById("resetBtn").onclick = function() {
         document.getElementById("contentForm").reset();
         document.getElementById("result").innerHTML = "";
-        document.getElementById("image-result").innerHTML = "";
+        document.getElementById("image-result").innerHTML = ""; 
         document.getElementById("actionsBtns").style.display = "none";
         this.style.display = "none";
     };
@@ -383,4 +405,111 @@ if (document.getElementById("exportScienceTxtBtn")) {
         link.click();
     };
 }
+
+// Navegación a la utilidad de contenido científico para RRSS
+if (document.getElementById("scienceSocialNavBtn")) {
+    document.getElementById("scienceSocialNavBtn").onclick = function() {
+        window.location.href = "/science_social";
+    };
+}
+
+// Generar contenido científico para RRSS
+if (document.getElementById("scienceSocialForm")) {
+    document.getElementById("scienceSocialForm").onsubmit = async function(e) {
+        e.preventDefault();
+        document.getElementById("scienceSocialResult").innerHTML = "Generando...";
+        const formData = new FormData(this);
+        const params = new URLSearchParams({
+            social_network: formData.get("social_network"),
+            topic: formData.get("topic"),
+            company_info: formData.get("company_info"),
+            voice: formData.get("voice"),
+            language: formData.get("language")
+        });
+        try {
+            const res = await fetch(`/api/explain?${params.toString()}`);
+            const data = await res.json();
+            if (res.ok) {
+                let html = `<div class="science-result"><h3>Contenido generado:</h3><div class="blog-content"><p>${data.explanation.replace(/\n/g, "<br>")}</p></div>`;
+                if (data.sources && data.sources.length > 0) {
+                    html += `<div class="science-sources"><h4>Fuentes utilizadas:</h4><ul>`;
+                    data.sources.forEach(src => {
+                        html += `<li>
+                            <a href="${src.url}" target="_blank">${src.title}</a>
+                        </li>`;
+                    });
+                    html += `</ul></div>`;
+                }
+                html += `</div>`;
+                document.getElementById("scienceSocialResult").innerHTML = html;
+                document.getElementById("scienceSocialActions").style.display = "flex";
+            } else {
+                document.getElementById("scienceSocialResult").innerHTML = `<span class="error">${data.detail || "Error generando contenido"}</span>`;
+                document.getElementById("scienceSocialActions").style.display = "none";
+            }
+        } catch (err) {
+            document.getElementById("scienceSocialResult").innerHTML = `<span class="error">Error de red</span>`;
+            document.getElementById("scienceSocialActions").style.display = "none";
+        }
+    };
+}
+
+// Copiar contenido científico para RRSS
+if (document.getElementById("copyScienceSocialBtn")) {
+    document.getElementById("copyScienceSocialBtn").onclick = function() {
+        const resultDiv = document.getElementById("scienceSocialResult");
+        const tempElement = document.createElement("div");
+        tempElement.innerHTML = resultDiv.innerHTML;
+        const text = tempElement.innerText;
+        navigator.clipboard.writeText(text)
+            .then(() => alert("¡Contenido copiado al portapapeles!"))
+            .catch(() => alert("No se pudo copiar el contenido."));
+    };
+}
+
+// Exportar como .md
+if (document.getElementById("exportScienceSocialMdBtn")) {
+    document.getElementById("exportScienceSocialMdBtn").onclick = function() {
+        const resultDiv = document.getElementById("scienceSocialResult");
+        const tempElement = document.createElement("div");
+        tempElement.innerHTML = resultDiv.innerHTML;
+        const text = tempElement.innerText;
+        const blob = new Blob([text], { type: "text/markdown" });
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = "contenido_cientifico_rrss.md";
+        link.click();
+    };
+}
+
+// Exportar como .txt
+if (document.getElementById("exportScienceSocialTxtBtn")) {
+    document.getElementById("exportScienceSocialTxtBtn").onclick = function() {
+        const resultDiv = document.getElementById("scienceSocialResult");
+        const tempElement = document.createElement("div");
+        tempElement.innerHTML = resultDiv.innerHTML;
+        const text = tempElement.innerText;
+        const blob = new Blob([text], { type: "text/plain" });
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = "contenido_cientifico_rrss.txt";
+        link.click();
+    };
+}
+
+document.querySelectorAll('.dropdown .dropbtn').forEach(btn => {
+    btn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        const dropdownContent = this.nextElementSibling;
+        dropdownContent.classList.toggle('show');
+        // Cierra otros menús abiertos
+        document.querySelectorAll('.dropdown-content').forEach(dc => {
+            if (dc !== dropdownContent) dc.classList.remove('show');
+        });
+    });
+});
+
+// Cierra el menú si haces click fuera
+document.addEventListener('click', function() {
+    document.querySelectorAll('.dropdown-content').forEach(dc => dc.classList.remove('show'));
 });

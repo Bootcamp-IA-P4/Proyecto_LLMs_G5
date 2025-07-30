@@ -1,12 +1,23 @@
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
+from dotenv import load_dotenv
+import logging 
 from server.routes.auth import router as auth_router
 from server.routes.content import router as content_router
 from server.routes.science import router as science_router
+from server.routes.explain import router as explain_router
 from server.config.settings import settings
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 import os
+
+# Configura logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+# Carga variables de entorno
+load_dotenv()
+
 
 app = FastAPI(
     title="AI Social Content Generator",
@@ -17,7 +28,7 @@ app = FastAPI(
 # CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # React dev server
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -34,9 +45,8 @@ templates = Jinja2Templates(directory=os.path.join(frontend_path, "templates"))
 # Routers
 app.include_router(auth_router, prefix="/api/auth", tags=["auth"])
 app.include_router(content_router, prefix="/api/content", tags=["content"])
-app.include_router(
-    science_router, prefix="/api/science", tags=["science"]
-)
+app.include_router(science_router, prefix="/api/science", tags=["science"])
+app.include_router(explain_router, prefix="/api/explain", tags=["explain"])
 
 @app.get("/")
 async def root(request: Request):
@@ -58,3 +68,7 @@ async def langsmit_page(request: Request):
 @app.get("/science")
 async def science_page(request: Request):
     return templates.TemplateResponse("science.html", {"request": request})
+
+@app.get("/science_social")
+async def science_social_page(request: Request):
+    return templates.TemplateResponse("science_social.html", {"request": request})
