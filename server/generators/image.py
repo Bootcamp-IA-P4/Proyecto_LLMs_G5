@@ -6,6 +6,7 @@ from PIL import Image
 from io import BytesIO
 from dotenv import load_dotenv
 from huggingface_hub import InferenceClient
+from server.utils.image_processor import resize_image_to_width
 
 script_dir = os.path.dirname(__file__)
 project_root = os.path.abspath(os.path.join(script_dir, "..", ".."))
@@ -15,19 +16,35 @@ load_dotenv(dotenv_path)
 STABILITY_API_KEY = os.getenv("STABILITY_API_KEY")
 HF_TOKEN = os.getenv("HF_TOKEN")
 
-def _save_image_and_get_url(image_bytes: bytes) -> str:
-    """Saves image bytes to a file and returns the static URL."""
+def _save_image_and_get_url(image_bytes: bytes, resize_width: Optional[int] = None) -> str:
+    """
+    Guarda los bytes de una imagen, opcionalmente la redimensiona y devuelve la URL estática.
+    """
     image = Image.open(BytesIO(image_bytes))
     current_dir = os.path.dirname(__file__)
     project_root = os.path.abspath(os.path.join(current_dir, "..", ".."))
     output_dir = os.path.join(project_root, "client", "static", "generated_images")
     os.makedirs(output_dir, exist_ok=True)
+    
     timestamp = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
-    filename = f"image_{timestamp}.png"
-    file_path = os.path.join(output_dir, filename)
-    image.save(file_path)
-    image_url = f"/static/generated_images/{filename}"
-    return image_url
+    original_filename = f"image_{timestamp}_orig.png"
+    original_filepath = os.path.join(output_dir, original_filename)
+    
+    # Guardar siempre la imagen original
+    image.save(original_filepath)
+
+    if resize_width:
+        resized_filename = f"image_{timestamp}_w{resize_width}.png"
+        resized_filepath = os.path.join(output_dir, resized_filename)
+        
+        # Redimensionar la imagen original
+        resize_image_to_width(original_filepath, resized_filepath, resize_width)
+        
+        # Devolver la URL de la imagen redimensionada
+        return f"/static/generated_images/{resized_filename}"
+    
+    # Si no se redimensiona, devolver la URL de la original
+    return f"/static/generated_images/{original_filename}"
 
 class ImageGenerator:
     def __init__(self, api_key: str = None):
@@ -117,7 +134,8 @@ def generate_image_huggingface(
             image.save(buffer, format="PNG")
             image_bytes = buffer.getvalue()
 
-        return _save_image_and_get_url(image_bytes)
+        # Guardar y redimensionar la imagen a un ancho de 768px
+        return _save_image_and_get_url(image_bytes, resize_width=768)
 
     except Exception as e:
         print(f"Error inesperado en la generación de imagen con Hugging Face Inference Client: {e}")

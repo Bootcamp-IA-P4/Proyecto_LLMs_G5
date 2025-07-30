@@ -512,4 +512,5 @@ document.querySelectorAll('.dropdown .dropbtn').forEach(btn => {
 // Cierra el menú si haces click fuera
 document.addEventListener('click', function() {
     document.querySelectorAll('.dropdown-content').forEach(dc => dc.classList.remove('show'));
+    });
 });

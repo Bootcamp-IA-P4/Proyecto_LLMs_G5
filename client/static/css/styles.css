@@ -1,3 +1,4 @@
+
 :root {
     --main-bg: #2F3C4E;
     --secondary: #E0E6ED;
@@ -518,11 +519,19 @@ a:hover {
 /* ----------- Imagen generada ----------- */
 .generated-image {
     max-width: 100%;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    margin-top: 10px;
-    margin-bottom: 10px;
-    display: block;
+    width: 100%; /* Asegura que la imagen ocupe todo el ancho del contenedor */
+    height: auto; /* Mantiene la proporción al cambiar el ancho */
+    display: block; /* Elimina espacios extra debajo de la imagen */
+    margin-top: 20px; /* Espacio superior */
+    margin-bottom: 20px; /* Espacio inferior */
+    border-radius: 12px; /* Esquinas más redondeadas */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* Sombra más pronunciada */
+}
+
+/* Contenedor del resultado para asegurar que tiene el ancho completo */
+#scienceResult {
+    width: 100%;
+    box-sizing: border-box; /* Asegura que el padding no afecte el ancho total */
 }
 
 /* ----------- Checkbox ----------- */
