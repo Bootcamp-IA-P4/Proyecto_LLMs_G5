@@ -3,6 +3,8 @@
     --secondary: #E0E6ED;
     --accent: #FF7F50;
     --tertiary: #AECBEF;
+    margin: 0;
+    padding: 0;
 }
 
 /* ----------- Estructura general ----------- */
@@ -24,6 +26,7 @@ body {
     border-radius: 18px;
     box-shadow: 0 4px 24px rgba(47, 60, 78, 0.13);
 }
+
 .auth-container {
     width: 100%;
     max-width: 600px;
@@ -123,34 +126,96 @@ button:hover,
     color: #fff;
     letter-spacing: 1px;
 }
+
 .logo-img {
     height: 2em;
     width: auto;
     display: inline-block;
     vertical-align: middle;
 }
+.navbar-toggle {
+    display: none;
+}
 .navbar-actions {
     display: flex;
     gap: 1em;
 }
-.navbar button {
+
+.navbar button,
+
+.navbar-actions button,
+.navbar-actions .dropbtn {
     background: transparent;
     color: #FF7F50;
     border: 2px solid #FF7F50;
     border-radius: 8px;
-    padding: 0.6em 1.4em;
+    padding: 0.8em 2em;
     font-weight: bold;
-    font-size: 1em;
+    font-size: 1.08em;
     cursor: pointer;
     transition: background 0.2s, color 0.2s;
-    min-width: 130px;
+    min-width: 180px;
     text-align: center;
+    box-sizing: border-box;
+    margin-right: 0.5em;
+    display: inline-block;
+    width: auto;
 }
 
-.navbar button:hover {
+.navbar-actions .dropbtn {
+    height: auto;
+}
+
+.navbar button:hover,
+.navbar-actions button:hover,
+.navbar-actions .dropbtn:hover {
     background: #FF7F50;
     color: #fff;
     border-color: #FF7F50;
+}
+
+/* ----------- Menú desplegable en navbar ----------- */
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    left: 0;
+    background-color: #fff;
+    min-width: 180px;
+    box-shadow: 0 8px 16px rgba(47, 60, 78, 0.13);
+    z-index: 1;
+    border-radius: 8px;
+    margin-top: 0.5em;
+    padding: 0.3em 0;
+}
+
+.dropdown-content a {
+    color: #FF7F50;
+    padding: 0.8em 2em;
+    text-decoration: none;
+    display: block;
+    font-size: 1.08em;
+    font-weight: bold;
+    border-bottom: 1px solid #e0e6ed;
+    text-align: center;
+    transition: background 0.2s;
+}
+
+.dropdown-content a:last-child {
+    border-bottom: none;
+}
+
+.dropdown-content a:hover {
+    background-color: #ffe5db;
+    color: #FF7F50;
+}
+
+.dropdown-content.show {
+    display: block;
 }
 /* ----------- Mensajes y textos ----------- */
 .h2_title {
@@ -223,152 +288,43 @@ a:hover {
     margin-top: 1.5em;
 }
 
-/* ----------- Responsive: formularios a todo ancho en móvil ----------- */
-@media (max-width: 700px) {
-    .auth-bg {
-        align-items: flex-start;
-        justify-content: flex-start;
-        min-height: 100vh;
-        padding: 0;
-    }
-
-    .container,
-    .auth-container {
-        max-width: 100vw;
-        width: 100vw;
-        min-height: 100vh;
-        border-radius: 0;
-        box-shadow: none;
-        padding: 2.5em 0.5em 2em 0.5em;
-        margin: 0;
-        display: flex;
-        flex-direction: column;
-        justify-content: flex-start;
-    }
-
-    .h2_title {
-        font-size: 1.5em;
-        margin-bottom: 1em;
-    }
-
-    .intro-text {
-        font-size: 1.1em;
-        margin-bottom: 2em;
-    }
-
-    input,
-    select,
-    .button_gen {
-        font-size: 1.15em;
-        padding: 1.2em 1em;
-        margin-bottom: 1.2em;
-    }
-
-    .navbar {
-        padding: 0.7em 1em;
-        font-size: 1em;
-    }
-
-    .logo {
-        font-size: 1.1em;
-    }
-
-    .navbar button {
-        width: auto;
-        padding: 0.5em 1em;
-        font-size: 1em;
-    }
-
-    .actions {
-        flex-direction: column;
-        gap: 0.7em;
-    }
-
-    .actions button {
-        max-width: 100%;
-    }
+/* ----------- Página científica ----------- */
+.science-container {
+    max-width: 900px;
+    margin: 40px auto;
+    background: #fff;
+    color: #2F3C4E;
+    padding: 2.5em 2em;
+    border-radius: 18px;
+    box-shadow: 0 4px 24px rgba(47, 60, 78, 0.13);
 }
 
-@media (max-width: 400px) {
-
-    .container,
-    .auth-container {
-        padding: 1em 0.2em 1em 0.2em;
-    }
-
-    .h2_title {
-        font-size: 1.1em;
-    }
-
-    .intro-text {
-        font-size: 0.98em;
-    }
-
-    input,
-    select,
-    .button_gen {
-        font-size: 1em;
-        padding: 1em 0.7em;
-    }
-}
-.hero-gradient {
-    background: linear-gradient(90deg, #ff6333 0%, #fff 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    font-weight: 800;
-    font-size: 1.5em;
-    letter-spacing: 1px;
-    display: inline-block;
+.science-form input,
+.science-form select,
+.science-form button {
+    font-size: 1.15em;
+    margin-bottom: 1.2em;
+    padding: 1.2em 1em;
+    border-radius: 12px;
+    width: 100%;
 }
 
-.hero-title .hero-sub {
-    color: #fff;
-    font-size: 0.8em;
-    font-weight: 500;
-    margin-top: 0.7em;
-    text-shadow: 0 2px 8px rgba(47, 60, 78, 0.15);
+.science-result {
+    margin-top: 2em;
+    background: #f7fafd;
+    border-radius: 10px;
+    padding: 1.5em;
+    box-shadow: 0 2px 8px rgba(47, 60, 78, 0.08);
 }
 
-@media (max-width: 700px) {
-    .hero-gradient {
-        font-size: 0.6em;
-    }
-
-    .hero-title .hero-sub {
-        font-size: 0.5em;
-    }
-}
-.hero-title {
-    width: 80%;
-    text-align: center;
-    margin: 2.5em 0 1.5em 0;
-    padding: 0 1em;
+.science-sources {
+    margin-top: 1.5em;
 }
 
-
-.hero-title .hero-sub {
-    display: block;
-    color: #fff;
-    font-size: 1em;
-    font-weight: 400;
-    margin-top: 0.7em;
-    font-family: 'Montserrat', Arial, sans-serif;
-    text-shadow: 0 1px 6px rgba(47, 60, 78, 0.15);
-}
-
-@media (max-width: 700px) {
-    .hero-title h1 {
-        font-size: 1.3em;
-    }
-
-    .hero-title .hero-sub {
-        font-size: 1em;
-    }
-
-    .hero-title {
-        margin: 1.2em 0 1em 0;
-        padding: 0 0.3em;
+@media (max-width: 900px) {
+    .science-container {
+        max-width: 99vw;
+        padding: 1em 0.3em;
     }
 }
 
@@ -376,22 +332,24 @@ a:hover {
 .langsmith-bg {
     background: #f3f6fa;
     width: 100vw;
-        min-width: 100vw;
-        max-width: 100vw;
-        min-height: 100vh;
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-        overflow-x: hidden;
+    min-width: 100vw;
+    max-width: 100vw;
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    overflow-x: hidden;
 }
+
 .langsmith-navbar,
 .navbar {
     width: 100vw;
     min-width: 100vw;
     box-sizing: border-box;
 }
+
 .langsmith-navbar {
-    background: #1a2233;
+    background: #2F3C4E;
     color: #fff;
 }
 
@@ -460,6 +418,7 @@ a:hover {
     max-height: 7em;
     overflow-y: auto;
 }
+
 .small-btn {
     width: auto;
     min-width: 90px;
@@ -476,7 +435,13 @@ a:hover {
     transition: background 0.2s;
     display: inline-block;
 }
-
+.image-url {
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
+    margin-top: 0.5em;
+    word-break: break-all;
+}
 .small-btn:hover {
     background: #ff6333;
 }
@@ -513,7 +478,7 @@ a:hover {
     }
 }
 
-/* Logo arriba a la derecha */
+/* ----------- Imagen decorativa ----------- */
 .corner-logo {
     position: absolute;
     top: 10px;
@@ -525,7 +490,6 @@ a:hover {
     pointer-events: none;
 }
 
-/* Imagen decorativa abajo a la derecha */
 .corner-bg {
     position: absolute;
     bottom: -20px;
@@ -551,7 +515,7 @@ a:hover {
     }
 }
 
-/* ----------- Imagen ----------- */
+/* ----------- Imagen generada ----------- */
 .generated-image {
     max-width: 100%;
     border-radius: 8px;
@@ -561,6 +525,7 @@ a:hover {
     display: block;
 }
 
+/* ----------- Checkbox ----------- */
 .checkbox-row {
     display: flex;
     align-items: center;
@@ -622,42 +587,170 @@ a:hover {
     border-color: #ff6333;
 }
 
-/* ----------- Página científica ----------- */
-.science-container {
-    max-width: 900px;
-    margin: 40px auto;
-    background: #fff;
-    color: #2F3C4E;
-    padding: 2.5em 2em;
-    border-radius: 18px;
-    box-shadow: 0 4px 24px rgba(47, 60, 78, 0.13);
+/* ----------- Hero ----------- */
+.hero-gradient {
+    background: linear-gradient(90deg, #ff6333 0%, #fff 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-weight: 800;
+    font-size: 1.5em;
+    letter-spacing: 1px;
+    display: inline-block;
 }
 
-.science-form input,
-.science-form select,
-.science-form button {
-    font-size: 1.15em;
-    margin-bottom: 1.2em;
-    padding: 1.2em 1em;
-    border-radius: 12px;
-    width: 100%;
+.hero-title {
+    width: 80%;
+    text-align: center;
+    margin: 2.5em 0 1.5em 0;
+    padding: 0 1em;
 }
 
-.science-result {
-    margin-top: 2em;
-    background: #f7fafd;
-    border-radius: 10px;
-    padding: 1.5em;
-    box-shadow: 0 2px 8px rgba(47, 60, 78, 0.08);
+.hero-title .hero-sub {
+    display: block;
+    color: #fff;
+    font-size: 1em;
+    font-weight: 400;
+    margin-top: 0.7em;
+    font-family: 'Montserrat', Arial, sans-serif;
+    text-shadow: 0 1px 6px rgba(47, 60, 78, 0.15);
 }
 
-.science-sources {
-    margin-top: 1.5em;
+@media (max-width: 700px) {
+    .hero-gradient {
+        font-size: 0.6em;
+    }
+
+    .hero-title h1 {
+        font-size: 1.3em;
+    }
+
+    .hero-title .hero-sub {
+        font-size: 1em;
+    }
+
+    .hero-title {
+        margin: 1.2em 0 1em 0;
+        padding: 0 0.3em;
+    }
 }
 
-@media (max-width: 900px) {
-    .science-container {
-        max-width: 99vw;
-        padding: 1em 0.3em;
+/* ----------- Responsive: formularios a todo ancho en móvil ----------- */
+@media (max-width: 700px) {
+    .auth-bg {
+        align-items: flex-start;
+        justify-content: flex-start;
+        min-height: 100vh;
+        padding: 0;
+    }
+
+    .container,
+    .auth-container {
+        max-width: 100vw;
+        width: 100vw;
+        min-height: 100vh;
+        border-radius: 0;
+        box-shadow: none;
+        padding: 2.5em 0.5em 2em 0.5em;
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+    }
+
+    .h2_title {
+        font-size: 1.5em;
+        margin-bottom: 1em;
+    }
+
+    .intro-text {
+        font-size: 1.1em;
+        margin-bottom: 2em;
+    }
+
+    input,
+    select,
+    .button_gen {
+        font-size: 1.15em;
+        padding: 1.2em 1em;
+        margin-bottom: 1.2em;
+    }
+
+    .navbar {
+        flex-direction: column;
+        align-items: stretch;
+        padding: 0.5em 0.5em;
+        margin-bottom: 1em;
+    }
+
+    .logo {
+        justify-content: center;
+        margin-bottom: 0.5em;
+    }
+
+    .navbar-actions {
+        flex-direction: column;
+        gap: 0.3em;
+        width: 100%;
+        align-items: stretch;
+    }
+
+    .navbar-actions button,
+    .navbar-actions .dropbtn {
+        width: 80%;
+        min-width: 0;
+        padding: 0.4em 0.5em;
+        font-size: 0.59em;
+        margin-right: 0.2em;
+        margin-bottom: 0.2em;
+        border-radius: 8px;
+    }
+
+    .dropdown-content {
+        min-width: 100%;
+        left: 0;
+        border-radius: 0 0 10px 10px;
+        box-shadow: none;
+        padding: 0.1em 0;
+        position: static;
+    }
+
+    .dropdown-content a {
+        padding: 0.5em 0.5em;
+        font-size: 1em;
+        border-radius: 0;
+    }
+
+    .actions {
+        flex-direction: column;
+        gap: 0.7em;
+    }
+
+    .actions button {
+        max-width: 100%;
+    }
+
+}
+
+@media (max-width: 400px) {
+
+    .container,
+    .auth-container {
+        padding: 1em 0.2em 1em 0.2em;
+    }
+
+    .h2_title {
+        font-size: 1.1em;
+    }
+
+    .intro-text {
+        font-size: 0.98em;
+    }
+
+    input,
+    select,
+    .button_gen {
+        font-size: 1em;
+        padding: 1em 0.7em;
     }
 }

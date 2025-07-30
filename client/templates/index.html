@@ -13,11 +13,17 @@
             <img src="{{ url_for('static', path='img/logo-cgai.png') }}" alt="Logo" class="logo-img">
             ContentGenius AI
         </span>
-        <div class="navbar-actions">
-            <button id="scienceNavBtn" type="button">Contenido científico</button>
+        <div class="navbar-actions" >
+            <div class="dropdown" >
+                <button class="dropbtn" type="button">Contenido científico</button>
+                <div class="dropdown-content">
+                    <a href="/science">Artículos y resúmenes</a>
+                    <a href="/science_social">Para redes sociales</a>
+                </div>
+            </div>
             <button id="logsNavBtn" type="button">Ver Logs LangSmith</button>
             <button id="logoutBtn" type="button">Cerrar sesión</button>
-        </div>    
+        </div>
     </nav>
     <div class="container">
         <h2 class="h2_title">Genera contenido para tus redes sociales</h2>

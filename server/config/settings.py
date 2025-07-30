@@ -17,4 +17,19 @@ class Settings:
     GROQ_API_KEY = os.getenv("GROQ_API_KEY")
     STABILITY_API_KEY = os.getenv("STABILITY_API_KEY")
 
+    # Cloudinary
+    CLOUDINARY_CLOUD_NAME = os.getenv("CLOUDINARY_CLOUD_NAME")
+    CLOUDINARY_API_KEY = os.getenv("CLOUDINARY_API_KEY")
+    CLOUDINARY_API_SECRET = os.getenv("CLOUDINARY_API_SECRET")
+
+    # Chroma
+    CHROMA_API_KEY = os.getenv("CHROMA_API_KEY")
+    CHROMA_TENANT = os.getenv("CHROMA_TENANT")
+    CHROMA_DATABASE = os.getenv("CHROMA_DATABASE")
+
+    # Langsmith
+    LANGSMITH_API_KEY = os.getenv("LANGSMITH_API_KEY")
+    LANGSMITH_PROJECT_ID = os.getenv("LANGSMITH_PROJECT_ID")
+    
+
 settings = Settings()
