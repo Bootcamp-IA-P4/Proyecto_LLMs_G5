@@ -5,7 +5,7 @@ import requests
 from PIL import Image
 from io import BytesIO
 from dotenv import load_dotenv
-import fal_client
+from huggingface_hub import InferenceClient
 
 script_dir = os.path.dirname(__file__)
 project_root = os.path.abspath(os.path.join(script_dir, "..", ".."))
@@ -13,6 +13,7 @@ dotenv_path = os.path.join(project_root, ".env")
 load_dotenv(dotenv_path)
 
 STABILITY_API_KEY = os.getenv("STABILITY_API_KEY")
+HF_TOKEN = os.getenv("HF_TOKEN")
 
 def _save_image_and_get_url(image_bytes: bytes) -> str:
     """Saves image bytes to a file and returns the static URL."""
@@ -75,19 +76,22 @@ class ImageGenerator:
             print(f"Error llamando a la API de Stability: {e}")
             return None
 
-def generate_image_fal_ai(
+def generate_image_huggingface(
     topic: str,
     platform: str,
     voice: str,
     company_info: str = "",
     language: str = "en",
     prompt: Optional[str] = None
-) -> str:
+) -> Optional[str]:
     """
-    Generates an image using the fal.ai API.
-    Saves the image to a file and returns its URL.
+    Generates an image using the Hugging Face Inference Client.
+    Saves the image to a file and returns its static URL.
     """
-    # Use specific prompt if provided, otherwise construct one
+    if not HF_TOKEN:
+        print("❌ Token de Hugging Face (HF_TOKEN) no configurado. No se generará imagen.")
+        return None
+
     if not prompt:
         prompt = (
             f"Ultra-realistic, highly detailed illustration for {platform}. "
@@ -99,16 +103,22 @@ def generate_image_fal_ai(
         prompt += (
             "cinematic, sharp focus, 8k resolution, masterpiece, professional quality."
         )
+    try:
+        client = InferenceClient(
+            provider="nebius",
+            token=HF_TOKEN,
+        )
+        image = client.text_to_image(
+            prompt,
+            model="black-forest-labs/FLUX.1-dev",
+        )
+        # Convert PIL Image to bytes
+        with BytesIO() as buffer:
+            image.save(buffer, format="PNG")
+            image_bytes = buffer.getvalue()
 
-    # Call fal.ai API
-    handler = fal_client.submit(
-        "fal-ai/flux/dev",
-        arguments={"prompt": prompt},
-    )
-    result = handler.get()
-    image_url_from_fal = result["images"][0]["url"]
-    # Download the image from the URL provided by fal.ai
-    image_response = requests.get(image_url_from_fal)
-    image_response.raise_for_status()
-    
-    return _save_image_and_get_url(image_response.content)
+        return _save_image_and_get_url(image_bytes)
+
+    except Exception as e:
+        print(f"Error inesperado en la generación de imagen con Hugging Face Inference Client: {e}")
+        return None

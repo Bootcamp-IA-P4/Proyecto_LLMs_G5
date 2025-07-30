@@ -2,7 +2,7 @@ import base64
 from server.config.settings import settings
 from server.utils.database import get_supabase
 from server.generators.text import generate_text
-from server.generators.image import generate_image_fal_ai, ImageGenerator
+from server.generators.image import generate_image_huggingface, ImageGenerator
 from server.models.post import ContentRequest, ContentResponse
 from server.utils.pipeline import run_pipeline
 from uuid import UUID
@@ -33,9 +33,9 @@ async def generate_content(request: ContentRequest, user_id: UUID):
                 print("🖼️ Generating image with Stability AI...")
                 stability_client = ImageGenerator()
                 image_url = stability_client.generate_image(prompt=prompt)
-            else: # Default to fal_ai
-                print("🖼️ Generating image with Fal AI...")
-                image_url = generate_image_fal_ai(
+            else: # Default to huggingface                                                                                  │
+                print("🖼️ Generating image with Hugging Face...")   
+                image_url = generate_image_huggingface(
                     topic=request.topic,
                     platform=request.platform,
                     voice=request.audience,
