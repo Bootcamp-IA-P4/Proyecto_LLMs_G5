@@ -1,3 +1,7 @@
+document.addEventListener("DOMContentLoaded", function() {
+    // ...todo tu código JS aquí...
+//const { Debug } = require("@prisma/client/runtime/library");
+
 function getToken() {
     return localStorage.getItem("access_token");
 }
@@ -67,6 +71,12 @@ if (document.getElementById("contentForm")) {
     document.getElementById("contentForm").onsubmit = async function(e) {
         e.preventDefault();
         document.getElementById("result").innerHTML = "";
+        const imageDiv = document.getElementById('image-result');
+        imageDiv.innerHTML = "";
+        document.getElementById("loader").style.display = "block";
+        document.getElementById("actionsBtns").style.display = "none";
+        showResetBtn(false);
+
         try {
             const formData = new FormData(this);
             const payload = {
@@ -80,9 +90,12 @@ if (document.getElementById("contentForm")) {
                 payload.company_info = formData.get("company_info");
             }
             payload.include_image = document.getElementById("include_image").checked;
-            const imagePromptValue = document.getElementById("image_prompt").value;
-            if (imagePromptValue) {
-                payload.image_prompt = imagePromptValue;
+            if (payload.include_image) {
+                payload.image_generator = formData.get("image_generator");
+                const imagePromptValue = document.getElementById("image_prompt").value;
+                if (imagePromptValue) {
+                    payload.image_prompt = imagePromptValue;
+                }
             }
             const res = await fetch("/api/content/generate", {
                 method: "POST",
@@ -97,7 +110,6 @@ if (document.getElementById("contentForm")) {
             if (res.ok) {
                 let content = data.text_content;
                 const selectedPlatform = formData.get("platform");
-
                 // Formateamos mejor el contenido para las generaciones de blog
                 if (selectedPlatform === "blog") {
                     content = content
@@ -110,10 +122,8 @@ if (document.getElementById("contentForm")) {
                 } else {
                     content = `<p>${content}</p>`;
                 }
-
                 document.getElementById("result").innerHTML = `<h3>Resultado:</h3>${content}`;
                 // Mostrar la imagen 
-                const imageDiv = document.getElementById('image-result');
                 if (data.image_url) {
                     imageDiv.innerHTML = `<img src="${data.image_url}" alt="Imagen generada" class="generated-image">
                     <div class="image-url">
@@ -137,14 +147,11 @@ if (document.getElementById("contentForm")) {
                 showResetBtn(true);
             } else {
                 document.getElementById("result").innerHTML = `<span class="error">${data.detail || "Error generando contenido"}</span>`;
-                document.getElementById("actionsBtns").style.display = "none";
-                showResetBtn(false);
             }
         } catch (err) {
+            document.getElementById("result").innerHTML = `<span class="error">Error de red: ${err.message}</span>`;
+        } finally {
             document.getElementById("loader").style.display = "none";
-            document.getElementById("result").innerHTML = `<span class="error">Error de red</span>`;
-            document.getElementById("actionsBtns").style.display = "none";
-            showResetBtn(false);
         }
     };
 }
@@ -505,4 +512,5 @@ document.querySelectorAll('.dropdown .dropbtn').forEach(btn => {
 // Cierra el menú si haces click fuera
 document.addEventListener('click', function() {
     document.querySelectorAll('.dropdown-content').forEach(dc => dc.classList.remove('show'));
+    });
 });

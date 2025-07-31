@@ -1,6 +1,8 @@
+import base64
 from server.config.settings import settings
 from server.utils.database import get_supabase
 from server.generators.text import generate_text
+from server.generators.image import generate_image_huggingface, ImageGenerator
 from server.models.post import ContentRequest, ContentResponse
 from server.utils.pipeline import run_pipeline
 from uuid import UUID
@@ -22,25 +24,42 @@ async def generate_content(request: ContentRequest, user_id: UUID):
     except Exception as e:
         print(f"❌ Error generating text: {e}")
         raise Exception(f"Text generation failed: {str(e)}")
-    # Si el usuario solicita imagen:
-    image_url = None
-    image_base64 = None
-    if getattr(request, "include_image", False):
-        pipeline_result = run_pipeline(
-            topic=request.topic,
-            platform=request.platform,
-            model_name=model_used,
-            voice=request.audience,
-            company_info="",
-            language=request.language,
-            include_image=True,
-            image_prompt=getattr(request, "image_prompt", None)           
-        )
-        image_url = pipeline_result.get("image_url")
-        image_bytes = pipeline_result.get("image")
-        if image_bytes:
-            image_base64 = "data:image/png;base64," + base64.b64encode(image_bytes).decode("utf-8")
 
+    image_url = None
+    if request.include_image:
+        try:
+            prompt = request.image_prompt or request.topic
+            if request.image_generator == 'stability_ai':
+                print("🖼️ Generating image with Stability AI...")
+                stability_client = ImageGenerator()
+                image_url = stability_client.generate_image(prompt=prompt)
+            else: # Default to huggingface                                                                                  │
+                print("🖼️ Generating image with Hugging Face...")   
+                image_url = generate_image_huggingface(
+                    topic=request.topic,
+                    platform=request.platform,
+                    voice=request.audience,
+                    company_info="",
+                    language=request.language,
+                    prompt=request.image_prompt
+                )
+            if image_url:
+                print(f"✅ Generated image: {image_url}...")
+            else:
+                print("❌ Image generation failed, no URL returned.")
+        except Exception as e:
+            print(f"❌ Error generating image: {e}")
+            # No relanzar la excepción, simplemente no habrá imagen
+            image_url = None
+
+    # Ensure image_url is a string or None, extract if it's a tuple
+    if isinstance(image_url, tuple):
+        # Assuming the format is ('key', actual_url) or ('key', None)
+        # We want the second element of the tuple
+        actual_image_url = image_url[1]
+        print(f"DEBUG: Extracted actual_image_url from tuple: {actual_image_url}")
+    else:
+        actual_image_url = image_url
 
     # Guardar en base de datos
     supabase = get_supabase()
@@ -51,26 +70,23 @@ async def generate_content(request: ContentRequest, user_id: UUID):
         "language": request.language,
         "model": model_used,
         "text_content": generated_text,
-        "image_url": image_url
+        "image_url": actual_image_url
     }
 
     print("💾 Saving to Supabase...")
     try:
         response = supabase.table("posts").insert(post_data).execute()
-        # Supabase no tiene status_code, solo verifica si hay data
         if not response.data:
             raise Exception("No data returned from Supabase insert")
             
     except Exception as e:
         print(f"❌ Database error: {e}")
-        # No relanzar la excepción si es solo el guardado, devolver el contenido generado
         print("⚠️ Content generated but not saved to database")
 
     return ContentResponse(
         text_content=generated_text,
-        image_url=image_url or image_base64
+        image_url=actual_image_url
     )
-
 
 async def get_user_posts(user_id: UUID):
     """Obtiene el historial de posts del usuario"""

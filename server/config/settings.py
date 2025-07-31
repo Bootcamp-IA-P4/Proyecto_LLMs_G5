@@ -16,6 +16,7 @@ class Settings:
     # AI APIs
     GROQ_API_KEY = os.getenv("GROQ_API_KEY")
     STABILITY_API_KEY = os.getenv("STABILITY_API_KEY")
+    HUGGINGFACE_API_KEY = os.getenv("HUGGINGFACE_API_KEY")
 
     # Cloudinary
     CLOUDINARY_CLOUD_NAME = os.getenv("CLOUDINARY_CLOUD_NAME")

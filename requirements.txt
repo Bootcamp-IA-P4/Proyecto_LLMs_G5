@@ -6,7 +6,6 @@ anyio
 arxiv
 attrs
 httpx
-bcrypt
 certifi
 cffi
 charset-normalizer
@@ -56,7 +55,6 @@ networkx
 numpy
 orjson
 packaging
-passlib
 pillow
 postgrest
 propcache
@@ -92,6 +90,15 @@ typing-extensions
 urllib3
 uvicorn
 pydantic[email]
+websockets
+xmltodict
+yarl
+zstandard
+openai
+bcrypt==4.0.1
+passlib==1.7.4
+diffusers
+accelerate
 jinja2
 beautifulsoup4
 sentence-transformers
