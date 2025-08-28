@@ -10,6 +10,7 @@ class ContentRequest(BaseModel):
     language: str  # es, en, fr
     model: Optional[str] = "llama3-8b-8192"  # modelo de Groq seleccionado
     include_image: Optional[bool] = False
+    image_generator: Optional[str] = 'fal_ai'
     image_prompt: Optional[str] = None
 
 class ContentResponse(BaseModel):
