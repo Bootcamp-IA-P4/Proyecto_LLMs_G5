@@ -26,7 +26,7 @@ Plataforma web para la generación automática de contenido para redes sociales 
 - **Autenticación segura**: JWT con bcrypt para hashing de contraseñas
 - **API RESTful**: Endpoints organizados y documentados
 - **Base de datos**: Supabase con esquemas optimizados
-- **Almacenamiento**: Cloudinary para gestión de imágenes
+- **Almacenamiento**: Cloudinary para gestión de imágenes como CDN(Content Delivery Network)
 - **Monitoreo**: Integración con LangSmith para logs y trazabilidad
 
 ## 🛠️ Tecnologías utilizadas
