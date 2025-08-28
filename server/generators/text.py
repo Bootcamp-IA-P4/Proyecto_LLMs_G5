@@ -9,11 +9,14 @@ dotenv_path = os.path.join(project_root, ".env")
 
 load_dotenv(dotenv_path=dotenv_path)
 
+
 try:  
     from server.prompts.prompts import PROMPTS
 except ImportError:
     print("No se encontró el archivo, usaremos el prompt por defecto")
     PROMPTS = {"default": "Write  {topic}"}
+
+
 
 def generate_text(topic: str, platform: str, model_name: str = "llama3-8b-8192", voice: str = "a neutral and informative assistant", company_info: str = "", language: str = "en") -> str:
     print(f"Generating text for '{platform}' with the model '{model_name}'" )
@@ -43,3 +46,4 @@ def generate_text(topic: str, platform: str, model_name: str = "llama3-8b-8192",
     except Exception as e:
         print(f"Error generating text: {e}")
         return "Error generating text" 
+
