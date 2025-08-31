@@ -28,7 +28,7 @@ class ScientificRAG:
         if not groq_api_key:
             raise ValueError("GROQ_API_KEY no está configurada como variable de entorno.")
         
-        self.llm = ChatGroq(temperature=0.3, model_name="llama3-8b-8192", groq_api_key=groq_api_key)
+        self.llm = ChatGroq(temperature=0.3, model_name="llama-3.1-8b-instant", groq_api_key=groq_api_key)
 
     def initialize_prompt(self, social_network: str, topic: str, company_info: str, voice: str, language: str):
         self.topic = topic

@@ -11,7 +11,7 @@ def translate_text(texto):
 def run_pipeline(
     topic: str,
     platform: str,
-    model_name: str = "llama3-8b-8192",
+    model_name: str = "llama-3.1-8b-instant",
     voice: str = "general",
     company_info: str = "",
     language: str = "es",

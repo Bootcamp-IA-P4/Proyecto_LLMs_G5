@@ -8,7 +8,7 @@ class ContentRequest(BaseModel):
     topic: str
     audience: str  # juvenil, general, técnica
     language: str  # es, en, fr
-    model: Optional[str] = "llama3-8b-8192"  # modelo de Groq seleccionado
+    model: Optional[str] = "llama-3.1-8b-instant"  # modelo de Groq seleccionado
     include_image: Optional[bool] = False
     image_generator: Optional[str] = 'fal_ai'
     image_prompt: Optional[str] = None

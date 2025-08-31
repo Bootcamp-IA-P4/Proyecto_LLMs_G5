@@ -6,7 +6,7 @@ class ScienceRequest(BaseModel):
     topic: str
     audience: str  
     language: str
-    model: str = Field(default="llama3-8b-8192")
+    model: str = Field(default="llama-3.1-8b-instant")
     max_docs: int = Field(default=5, ge=1, le=20)
 
 class SourceInfo(BaseModel):
