@@ -3,8 +3,9 @@ from uuid import UUID
 from typing import List
 
 from server.models.science import ScienceRequest, ScienceResponse, SciencePostDB
-from server.services.science_service import generate_science_content, AVAILABLE_MODELS
+from server.services.science_service import generate_science_content
 from server.utils.dependencies import get_current_user
+from server.config.settings import settings
 from server.utils.database import get_supabase
 
 router = APIRouter()
@@ -13,8 +14,8 @@ router = APIRouter()
 async def get_available_models():
     """Obtener modelos disponibles para generación científica"""
     return {
-        "models": list(AVAILABLE_MODELS.keys()),
-        "default": "llama-3.1-8b-instant"
+        "models": list(settings.GROQ_AVAILABLE_MODELS.keys()),
+        "default": settings.GROQ_DEFAULT_MODEL
     }
 
 @router.post("/generate", response_model=ScienceResponse)

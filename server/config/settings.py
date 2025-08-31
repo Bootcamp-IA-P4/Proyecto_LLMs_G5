@@ -18,6 +18,14 @@ class Settings:
     STABILITY_API_KEY = os.getenv("STABILITY_API_KEY")
     HUGGINGFACE_API_KEY = os.getenv("HUGGINGFACE_API_KEY")
 
+    # Model Names
+    GROQ_DEFAULT_MODEL = "llama-3.1-8b-instant"
+    GROQ_AVAILABLE_MODELS = {
+        "llama-3.1-8b-instant": "Llama 3.1 (8B)",
+        "llama-3.3-70b-versatile": "Llama 3.3 (70B)",
+    }
+    HUGGINGFACE_IMAGE_MODEL = "black-forest-labs/FLUX.1-dev"
+
     # Cloudinary
     CLOUDINARY_CLOUD_NAME = os.getenv("CLOUDINARY_CLOUD_NAME")
     CLOUDINARY_API_KEY = os.getenv("CLOUDINARY_API_KEY")
