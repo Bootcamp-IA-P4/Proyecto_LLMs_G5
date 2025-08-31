@@ -1,4 +1,5 @@
 import os
+from server.config.settings import settings
 from typing import Optional
 import datetime
 import requests
@@ -127,7 +128,7 @@ def generate_image_huggingface(
         )
         image = client.text_to_image(
             prompt,
-            model="black-forest-labs/FLUX.1-dev",
+            model=settings.HUGGINGFACE_IMAGE_MODEL,
         )
         # Convert PIL Image to bytes
         with BytesIO() as buffer:

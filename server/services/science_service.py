@@ -19,10 +19,7 @@ from langchain_chroma import Chroma
 from server.chroma_db.connection_db import client
 
 # Modelos disponibles
-AVAILABLE_MODELS = {
-    "llama-3.1-8b-instant": "llama-3.1-8b-instant",
-    "llama-3.3-70b-versatile": "llama-3.3-70b-versatile",
-}
+AVAILABLE_MODELS = settings.GROQ_AVAILABLE_MODELS
 
 # Mapeo de idioma para el prompt
 LANG_INSTRUCTIONS = {
