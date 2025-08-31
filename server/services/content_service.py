@@ -9,7 +9,7 @@ from uuid import UUID
 import base64
 
 async def generate_content(request: ContentRequest, user_id: UUID):
-    model_used = request.model if request.model and request.model.strip() else "llama3-8b-8192"
+    model_used = request.model if request.model and request.model.strip() else "llama-3.1-8b-instant"
     
     try:
         generated_text = generate_text(

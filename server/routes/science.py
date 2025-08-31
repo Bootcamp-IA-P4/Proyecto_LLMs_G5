@@ -14,7 +14,7 @@ async def get_available_models():
     """Obtener modelos disponibles para generación científica"""
     return {
         "models": list(AVAILABLE_MODELS.keys()),
-        "default": "llama3-8b-8192"
+        "default": "llama-3.1-8b-instant"
     }
 
 @router.post("/generate", response_model=ScienceResponse)

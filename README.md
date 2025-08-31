@@ -8,7 +8,7 @@ Plataforma web para la generación automática de contenido para redes sociales 
 
 - **Plataformas soportadas**: LinkedIn, Twitter, Instagram, Blog
 - **Personalización avanzada**: Audiencias (juvenil, general, técnica) e idiomas (español, inglés, francés)
-- **Modelos LLM**: Integración con Groq (llama3-8b-8192, gemma2-9b-it)
+- **Modelos LLM**: Integración con Groq. Se han actualizado los modelos para usar las últimas versiones de producción, reemplazando los obsoletos `llama3-8b-8192` y `gemma2-9b-it` por `llama-3.1-8b-instant` y `llama-3.3-70b-versatile`.
 - **Generación de imágenes**: Integración con Stability AI para contenido visual
 - **RAG para redes sociales**: Contenido enriquecido con fuentes científicas para mayor precisión
 
@@ -243,7 +243,7 @@ Authorization: Bearer <token>
     "topic": "inteligencia artificial",
     "audience": "técnica",
     "language": "es",
-    "model": "llama3-8b-8192",
+    "model": "llama-3.1-8b-instant",
     "include_image": true,
     "image_prompt": "AI technology concept"
 }
@@ -255,7 +255,7 @@ Authorization: Bearer <token>
     "topic": "machine learning",
     "audience": "general",
     "language": "es",
-    "model": "llama3-8b-8192",
+    "model": "llama-3.1-8b-instant",
     "max_docs": 5
 }
 
