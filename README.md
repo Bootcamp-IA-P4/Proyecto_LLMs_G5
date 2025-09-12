@@ -8,7 +8,7 @@ Plataforma web para la generación automática de contenido para redes sociales 
 
 - **Plataformas soportadas**: LinkedIn, Twitter, Instagram, Blog
 - **Personalización avanzada**: Audiencias (juvenil, general, técnica) e idiomas (español, inglés, francés)
-- **Modelos LLM**: Integración con Groq (llama3-8b-8192, gemma2-9b-it)
+- **Modelos LLM**: Integración con Groq. Se han actualizado los modelos para usar las últimas versiones de producción, reemplazando los obsoletos `llama3-8b-8192` y `gemma2-9b-it` por `llama-3.1-8b-instant` y `llama-3.3-70b-versatile`.
 - **Generación de imágenes**: Integración con Stability AI para contenido visual
 - **RAG para redes sociales**: Contenido enriquecido con fuentes científicas para mayor precisión
 
@@ -26,8 +26,22 @@ Plataforma web para la generación automática de contenido para redes sociales 
 - **Autenticación segura**: JWT con bcrypt para hashing de contraseñas
 - **API RESTful**: Endpoints organizados y documentados
 - **Base de datos**: Supabase con esquemas optimizados
-- **Almacenamiento**: Cloudinary para gestión de imágenes
+- **Almacenamiento**: Cloudinary para gestión de imágenes como CDN(Content Delivery Network)
 - **Monitoreo**: Integración con LangSmith para logs y trazabilidad
+
+### Nuevas Funcionalidades y Mejoras Recientes
+
+*   **Integración de Hugging Face para Generación de Imágenes:**
+    *   Se ha reemplazado la API de Fal AI por la **Inference API de Hugging Face** para la generación de imágenes.
+    *   Utiliza el modelo `black-forest-labs/FLUX.1-dev` para imágenes de alta calidad.
+    *   Implementa **post-procesado de imágenes** (redimensionamiento automático, persistencia dual de original y redimensionada) para una visualización responsive y optimizada en el frontend.
+
+*   **Actualización de Modelos de Lenguaje (LLMs) de Groq:**
+    *   Los modelos obsoletos `llama3-8b-8192` y `gemma2-9b-it` han sido reemplazados por las versiones de producción recomendadas: `llama-3.1-8b-instant` y `llama-3.3-70b-versatile`.
+
+*   **Centralización de la Configuración de Modelos:**
+    *   Se ha refactorizado el código para centralizar los nombres de los modelos de texto y de imagen en `server/config/settings.py`.
+    *   Esto mejora la **mantenibilidad** y reduce la probabilidad de errores al actualizar modelos en el futuro.
 
 ## 🛠️ Tecnologías utilizadas
 
@@ -62,23 +76,33 @@ PROYECTO_LLMS_05/
 ├── client/                      # Frontend (HTML, CSS, JS)
 │   ├── static/
 │   │   ├── css/
+│   │   ├── generated_images/    # Imágenes generadas por la IA (ejemplos)
+│   │   │   ├── image_..._orig.png
+│   │   │   └── image_..._w768.png
 │   │   ├── img/                 # Logos y recursos gráficos
 │   │   └── js/
 │   └── templates/               # Plantillas HTML
 │
 ├── server/                      # Backend
 │   ├── chroma_db/               # Configuración de conexión a bbdd vectorial
-│   ├── config/settings.py       # Configuración
+│   ├── config/settings.py       # Configuración centralizada (API Keys, Modelos)
 │   ├── generators/              # Generadores de contenido
-│   │   ├── image.py
-│   │   └── text.py
-│   ├── models/                  # Modelos Pydantic
-│   ├── prompts/                 # Plantillas de prompts
-│   ├── RAG/                     # Lógica de RAG para redes sociales
-│   ├── routes/                  # Endpoints API
-│   ├── services/                # Lógica de negocio
-│   ├── utils/                   # Utilidades
-│   └── main.py                  # Punto de entrada
+│   │   ├── image.py             # Lógica para generar imágenes (Hugging Face, Stability AI)
+│   │   └── text.py              # Lógica para generar texto (Groq)
+│   ├── models/                  # Modelos Pydantic para validación de datos
+│   ├── prompts/                 # Plantillas de prompts para los LLMs
+│   │   ├── prompts.py
+│   │   └── prompts_rag.py
+│   ├── RAG/                     # Lógica de Retrieval-Augmented Generation
+│   │   ├── initialize_db.py     # Script para inicializar la BBDD de vectores
+│   │   ├── rag_chain.py         # Cadena RAG principal
+│   │   └── vector_db.py         # Abstracción para la BBDD de vectores
+│   ├── routes/                  # Endpoints de la API (FastAPI)
+│   ├── services/                # Lógica de negocio y orquestación
+│   ├── utils/                   # Funciones de utilidad
+│   │   ├── image_processor.py   # Utilidades para post-procesado de imágenes
+│   │   └── translate.py         # Utilidades de traducción
+│   └── main.py                  # Punto de entrada de la aplicación
 │
 ├── .env.example
 ├── requirements.txt
@@ -243,7 +267,7 @@ Authorization: Bearer <token>
     "topic": "inteligencia artificial",
     "audience": "técnica",
     "language": "es",
-    "model": "llama3-8b-8192",
+    "model": "llama-3.1-8b-instant",
     "include_image": true,
     "image_prompt": "AI technology concept"
 }
@@ -255,7 +279,7 @@ Authorization: Bearer <token>
     "topic": "machine learning",
     "audience": "general",
     "language": "es",
-    "model": "llama3-8b-8192",
+    "model": "llama-3.1-8b-instant",
     "max_docs": 5
 }
 

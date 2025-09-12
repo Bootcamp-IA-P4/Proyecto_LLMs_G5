@@ -1,12 +1,13 @@
 from pydantic import BaseModel, Field
 from typing import List, Dict, Any, Optional
 from uuid import UUID
+from server.config.settings import settings
 
 class ScienceRequest(BaseModel):
     topic: str
     audience: str  
     language: str
-    model: str = Field(default="llama3-8b-8192")
+    model: str = Field(default=settings.GROQ_DEFAULT_MODEL)
     max_docs: int = Field(default=5, ge=1, le=20)
 
 class SourceInfo(BaseModel):

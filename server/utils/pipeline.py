@@ -3,6 +3,7 @@ from server.generators.text import generate_text
 from server.generators.image import ImageGenerator
 from deep_translator import GoogleTranslator
 from server.utils.cloudinary import upload_image_bytes
+from server.config.settings import settings
 
 def translate_text(texto):
     return GoogleTranslator(source='auto', target='en').translate(texto)
@@ -11,7 +12,7 @@ def translate_text(texto):
 def run_pipeline(
     topic: str,
     platform: str,
-    model_name: str = "llama3-8b-8192",
+    model_name: str = settings.GROQ_DEFAULT_MODEL,
     voice: str = "general",
     company_info: str = "",
     language: str = "es",

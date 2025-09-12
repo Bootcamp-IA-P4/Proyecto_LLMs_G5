@@ -2,14 +2,16 @@ from pydantic import BaseModel
 from typing import Optional, List
 from uuid import UUID
 from datetime import datetime
+from server.config.settings import settings
 
 class ContentRequest(BaseModel):
     platform: str  
     topic: str
     audience: str  # juvenil, general, técnica
     language: str  # es, en, fr
-    model: Optional[str] = "llama3-8b-8192"  # modelo de Groq seleccionado
+    model: Optional[str] = settings.GROQ_DEFAULT_MODEL  # modelo de Groq seleccionado
     include_image: Optional[bool] = False
+    image_generator: Optional[str] = 'fal_ai'
     image_prompt: Optional[str] = None
 
 class ContentResponse(BaseModel):

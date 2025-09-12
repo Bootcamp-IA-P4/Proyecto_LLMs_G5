@@ -11,6 +11,7 @@ from langchain_core.runnables import RunnablePassthrough
 from langchain_core.output_parsers import StrOutputParser
 from server.prompts.prompts_rag import PROMPTS
 from server.RAG.vector_db import VectorStore
+from server.config.settings import settings
 
 # Configura logging
 logging.basicConfig(level=logging.INFO)
@@ -28,7 +29,7 @@ class ScientificRAG:
         if not groq_api_key:
             raise ValueError("GROQ_API_KEY no está configurada como variable de entorno.")
         
-        self.llm = ChatGroq(temperature=0.3, model_name="llama3-8b-8192", groq_api_key=groq_api_key)
+        self.llm = ChatGroq(temperature=0.3, model_name=settings.GROQ_DEFAULT_MODEL, groq_api_key=groq_api_key)
 
     def initialize_prompt(self, social_network: str, topic: str, company_info: str, voice: str, language: str):
         self.topic = topic

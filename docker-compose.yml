@@ -5,9 +5,35 @@ services:
       dockerfile: server/Dockerfile
     ports:
       - "8000:8000"
+    volumes:
+      - ./server:/app/server
+      - ./client:/app/client
+    command: uvicorn server.main:app --host 0.0.0.0 --port 8000 --reload
+    environment:
+      - PYTHONUNBUFFERED=1
+      - PYTHONPATH=/app/server
     env_file: .env
+    # depends_on:
+    #   - libretranslate
+    # dns:
+    #   - 8.8.8.8
+    #   - 1.1.1.1
+    # dns_search: .
     networks:
       - app-net
+
+  # libretranslate:
+  #   image: libretranslate/libretranslate
+  #   container_name: libretranslate
+  #   ports:
+  #     - "5000:5000"
+  #   environment:
+  #     - PORT=5000
+  #   command: ["--load-only", "en,es"]
+  #   restart: on-failure
+  #   dns_search: .
+  #   networks:
+  #     - app-net
 
 networks:
   app-net:
